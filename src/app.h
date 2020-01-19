@@ -3,7 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
-#include "graphics/instance.h"
+#include "graphics/setup/instance.h"
 
 class App {
 public:

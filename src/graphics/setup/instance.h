@@ -8,6 +8,8 @@ public:
     Instance();
     ~Instance();
 
+    VkInstance& get() { return m_instance; }
+
 private:
     bool doesEveryValidationLayersExists(const std::vector<const char*>& validationLayers, const std::vector<VkLayerProperties>& availableLayers) const;
 
