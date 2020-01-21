@@ -1,6 +1,7 @@
 #include "devices.h"
 
 #include <iostream>
+#include <set>
 #include <debug_break/debug_break.h>
 
 //////////////////////////////////////////////////////
@@ -82,13 +83,17 @@ QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device, S
 LogicalDevice::LogicalDevice(PhysicalDevice& physicalDevice) {
     QueueFamilyIndices indices = physicalDevice.getQueueFamilyIndices();
 
-    VkDeviceQueueCreateInfo queueCreateInfo = {};
-    {
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies = { indices.graphicsFamily.value(), indices.presentFamily.value() };
+
+    float queuePriority = 1.0f;
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo = {};
         queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+        queueCreateInfo.queueFamilyIndex = queueFamily;
         queueCreateInfo.queueCount = 1;
-        float queuePriority = 1.0f;
         queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo);
     }
     
     VkPhysicalDeviceFeatures deviceFeatures = {};
@@ -96,8 +101,8 @@ LogicalDevice::LogicalDevice(PhysicalDevice& physicalDevice) {
     VkDeviceCreateInfo createInfo = {};
     {
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        createInfo.pQueueCreateInfos = &queueCreateInfo;
-        createInfo.queueCreateInfoCount = 1;
+        createInfo.pQueueCreateInfos = queueCreateInfos.data();
+        createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
         createInfo.pEnabledFeatures = &deviceFeatures;
         // enabledLayerCount and ppEnabledLayerNames fields are ignored by up-to-date implementations
     }
@@ -108,9 +113,7 @@ LogicalDevice::LogicalDevice(PhysicalDevice& physicalDevice) {
     }
 
     vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
-
-    // TODO create the presentation queue 
-    // https://vulkan-tutorial.com/en/Drawing_a_triangle/Presentation/Window_surface
+    vkGetDeviceQueue(m_device, indices.presentFamily.value(), 0, &m_presentQueue);
 }
 
 LogicalDevice::~LogicalDevice() {
