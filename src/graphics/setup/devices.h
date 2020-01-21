@@ -26,14 +26,17 @@ public:
 
     VkPhysicalDevice& get() { return m_device; }
     QueueFamilyIndices& getQueueFamilyIndices() { return m_queueFamilyIndices; }
+    const std::vector<const char*>& getDeviceExtensions() const { return m_deviceExtensions; }
 
 private:
     bool isDeviceSuitable(VkPhysicalDevice& device, Surface& surface);
+    bool checkDeviceExtensionSupport(VkPhysicalDevice& device);
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice& device, Surface& surface);
 
 private:
     VkPhysicalDevice m_device;
     QueueFamilyIndices m_queueFamilyIndices;
+    std::vector<const char*> m_deviceExtensions;
 };
 
 //////////////////////////////////////////////////////
