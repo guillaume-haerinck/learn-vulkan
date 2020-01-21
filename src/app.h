@@ -7,6 +7,7 @@
 #include "graphics/setup/devices.h"
 #include "graphics/output/surface.h"
 #include "graphics/output/swap-chain.h"
+#include "graphics/render/pipeline.h"
 
 class App {
 public:
@@ -25,5 +26,6 @@ private:
     PhysicalDevice* m_physicalDevice;
     LogicalDevice* m_logicalDevice;
     SwapChain* m_swapChain;
+    Pipeline* m_pipeline;
 };
 
