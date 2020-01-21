@@ -50,10 +50,21 @@ SwapChain::SwapChain(PhysicalDevice& physicalDevice, LogicalDevice& device, Surf
         std::cerr << "[SwapChain] Failed to create" << std::endl;
         debug_break();
     }
+
+    vkGetSwapchainImagesKHR(m_device.get(), m_swapChain, &imageCount, nullptr);
+    m_swapChainImages.resize(imageCount);
+    vkGetSwapchainImagesKHR(m_device.get(), m_swapChain, &imageCount, m_swapChainImages.data());
+    m_swapChainImageFormat = surfaceFormat.format;
+    m_swapChainExtent = extent;
+
+    createImageViews();
 }
 
 SwapChain::~SwapChain() {
     vkDestroySwapchainKHR(m_device.get(), m_swapChain, nullptr);
+    for (auto imageView : m_swapChainImageViews) {
+        vkDestroyImageView(m_device.get(), imageView, nullptr);
+    }
 }
 
 SwapChainSupportDetails SwapChain::querySwapChainSupport(VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface) {
@@ -111,5 +122,33 @@ VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilit
         actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
         return actualExtent;
+    }
+}
+
+void SwapChain::createImageViews() {
+    m_swapChainImageViews.resize(m_swapChainImages.size());
+
+    for (size_t i = 0; i < m_swapChainImages.size(); i++) {
+        VkImageViewCreateInfo createInfo = {};
+        {
+            createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            createInfo.image = m_swapChainImages[i];
+            createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            createInfo.format = m_swapChainImageFormat;
+            createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            createInfo.subresourceRange.baseMipLevel = 0;
+            createInfo.subresourceRange.levelCount = 1;
+            createInfo.subresourceRange.baseArrayLayer = 0;
+            createInfo.subresourceRange.layerCount = 1;
+        }
+
+        if (vkCreateImageView(m_device.get(), &createInfo, nullptr, &m_swapChainImageViews[i]) != VK_SUCCESS) {
+            std::cerr << "[SwapChain] Failed to create Image View" << std::endl;
+            debug_break();
+        }
     }
 }
