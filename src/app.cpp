@@ -6,7 +6,7 @@ App::App() {
     m_surface = new Surface(*m_vkInstance, m_window);
     m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
     m_logicalDevice = new LogicalDevice(*m_physicalDevice);
-    m_swapChain = new SwapChain(*m_physicalDevice, *m_surface);
+    m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
 }
 
 App::~App() {

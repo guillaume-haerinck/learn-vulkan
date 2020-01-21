@@ -14,13 +14,17 @@ struct SwapChainSupportDetails {
 
 class SwapChain {
 public:
-    SwapChain(PhysicalDevice& physicalDevice, Surface& surface);
+    SwapChain(PhysicalDevice& physicalDevice, LogicalDevice& device, Surface& surface);
     ~SwapChain();
 
-    static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& device, VkSurfaceKHR& surface);
+    static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface);
 
 private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
     VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
     VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+
+private:
+    VkSwapchainKHR m_swapChain;
+    LogicalDevice& m_device;
 };

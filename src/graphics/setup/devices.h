@@ -48,6 +48,8 @@ public:
     LogicalDevice(PhysicalDevice& physicalDevice);
     ~LogicalDevice();
 
+    VkDevice& get() { return m_device; }
+
 private:
     VkDevice m_device;
     VkQueue m_graphicsQueue;
