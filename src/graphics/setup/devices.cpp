@@ -33,7 +33,7 @@ PhysicalDevice::PhysicalDevice(Instance& instance) : m_device(VK_NULL_HANDLE) {
 PhysicalDevice::~PhysicalDevice() {
 }
 
-bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice device) {
+bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice& device) {
     VkPhysicalDeviceProperties deviceProperties;
     VkPhysicalDeviceFeatures deviceFeatures;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
@@ -46,7 +46,7 @@ bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice device) {
            indices.isComplete();
 }
 
-QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice device) {
+QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device) {
     QueueFamilyIndices indices;
     uint32_t queueFamilyCount = 0;
 
@@ -72,10 +72,37 @@ QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice device) {
 /////////////////// LOGICAL DEVICE ///////////////////
 //////////////////////////////////////////////////////
 
-LogicalDevice::LogicalDevice()
-{
+LogicalDevice::LogicalDevice(PhysicalDevice& physicalDevice) {
+    QueueFamilyIndices indices = physicalDevice.getQueueFamilyIndices();
+
+    VkDeviceQueueCreateInfo queueCreateInfo = {};
+    {
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+        queueCreateInfo.queueCount = 1;
+        float queuePriority = 1.0f;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+    }
+    
+    VkPhysicalDeviceFeatures deviceFeatures = {};
+
+    VkDeviceCreateInfo createInfo = {};
+    {
+        createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        createInfo.pQueueCreateInfos = &queueCreateInfo;
+        createInfo.queueCreateInfoCount = 1;
+        createInfo.pEnabledFeatures = &deviceFeatures;
+        // enabledLayerCount and ppEnabledLayerNames fields are ignored by up-to-date implementations
+    }
+
+    if (vkCreateDevice(physicalDevice.get(), &createInfo, nullptr, &m_device) != VK_SUCCESS) {
+        std::cerr << "[LogicalDevice] Failed to create" << std::endl;
+        debug_break();
+    }
+
+    vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
 }
 
-LogicalDevice::~LogicalDevice()
-{
+LogicalDevice::~LogicalDevice() {
+    vkDestroyDevice(m_device, nullptr);
 }

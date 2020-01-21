@@ -21,9 +21,12 @@ public:
     PhysicalDevice(Instance& instance);
     ~PhysicalDevice();
 
+    VkPhysicalDevice& get() { return m_device; }
+    QueueFamilyIndices getQueueFamilyIndices() { return findQueueFamilies(m_device); }
+
 private:
-    bool isDeviceSuitable(VkPhysicalDevice device);
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+    bool isDeviceSuitable(VkPhysicalDevice& device);
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice& device);
 
 private:
     VkPhysicalDevice m_device;
@@ -35,8 +38,10 @@ private:
 
 class LogicalDevice {
 public:
-    LogicalDevice();
+    LogicalDevice(PhysicalDevice& physicalDevice);
     ~LogicalDevice();
 
 private:
+    VkDevice m_device;
+    VkQueue m_graphicsQueue;
 };
