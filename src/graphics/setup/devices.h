@@ -2,13 +2,16 @@
 
 #include <optional>
 #include <vulkan/vulkan.h>
+
 #include "instance.h"
+#include "graphics/output/surface.h"
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
+    std::optional<uint32_t> presentFamily;
 
     bool isComplete() {
-        return graphicsFamily.has_value();
+        return graphicsFamily.has_value() && presentFamily.has_value();
     }
 };
 
@@ -18,18 +21,19 @@ struct QueueFamilyIndices {
 
 class PhysicalDevice {
 public:
-    PhysicalDevice(Instance& instance);
+    PhysicalDevice(Instance& instance, Surface& surface);
     ~PhysicalDevice();
 
     VkPhysicalDevice& get() { return m_device; }
-    QueueFamilyIndices getQueueFamilyIndices() { return findQueueFamilies(m_device); }
+    QueueFamilyIndices& getQueueFamilyIndices() { return m_queueFamilyIndices; }
 
 private:
-    bool isDeviceSuitable(VkPhysicalDevice& device);
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice& device);
+    bool isDeviceSuitable(VkPhysicalDevice& device, Surface& surface);
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice& device, Surface& surface);
 
 private:
     VkPhysicalDevice m_device;
+    QueueFamilyIndices m_queueFamilyIndices;
 };
 
 //////////////////////////////////////////////////////
@@ -44,4 +48,5 @@ public:
 private:
     VkDevice m_device;
     VkQueue m_graphicsQueue;
+    VkQueue m_presentQueue;
 };

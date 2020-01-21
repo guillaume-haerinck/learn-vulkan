@@ -7,7 +7,7 @@
 ////////////////// PHYSICAL DEVICE ///////////////////
 //////////////////////////////////////////////////////
 
-PhysicalDevice::PhysicalDevice(Instance& instance) : m_device(VK_NULL_HANDLE) {
+PhysicalDevice::PhysicalDevice(Instance& instance, Surface& surface) : m_device(VK_NULL_HANDLE) {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(instance.get(), &deviceCount, nullptr);
     if (deviceCount == 0) {
@@ -17,8 +17,8 @@ PhysicalDevice::PhysicalDevice(Instance& instance) : m_device(VK_NULL_HANDLE) {
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(instance.get(), &deviceCount, devices.data());
 
-    for (const auto& device : devices) {
-        if (isDeviceSuitable(device)) {
+    for (auto& device : devices) {
+        if (isDeviceSuitable(device, surface)) {
             m_device = device;
             break;
         }
@@ -33,20 +33,20 @@ PhysicalDevice::PhysicalDevice(Instance& instance) : m_device(VK_NULL_HANDLE) {
 PhysicalDevice::~PhysicalDevice() {
 }
 
-bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice& device) {
+bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice& device, Surface& surface) {
     VkPhysicalDeviceProperties deviceProperties;
     VkPhysicalDeviceFeatures deviceFeatures;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
-    QueueFamilyIndices indices = findQueueFamilies(device);
+    QueueFamilyIndices indices = findQueueFamilies(device, surface);
 
     return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
            deviceFeatures.geometryShader &&
            indices.isComplete();
 }
 
-QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device) {
+QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device, Surface& surface) {
     QueueFamilyIndices indices;
     uint32_t queueFamilyCount = 0;
 
@@ -59,6 +59,13 @@ QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device) {
         if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
             indices.graphicsFamily = i;
         }
+
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface.get(), &presentSupport);
+        if (presentSupport) {
+            indices.presentFamily = i;
+        }
+
         if (indices.isComplete()) {
             break;
         }
@@ -101,6 +108,9 @@ LogicalDevice::LogicalDevice(PhysicalDevice& physicalDevice) {
     }
 
     vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
+
+    // TODO create the presentation queue 
+    // https://vulkan-tutorial.com/en/Drawing_a_triangle/Presentation/Window_surface
 }
 
 LogicalDevice::~LogicalDevice() {
