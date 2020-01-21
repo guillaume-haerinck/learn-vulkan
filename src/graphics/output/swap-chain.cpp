@@ -9,6 +9,8 @@ SwapChain::SwapChain(PhysicalDevice& physicalDevice, Surface& surface) {
     VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
     VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
     VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
+
+    // https://vulkan-tutorial.com/en/Drawing_a_triangle/Presentation/Swap_chain
 }
 
 SwapChain::~SwapChain()

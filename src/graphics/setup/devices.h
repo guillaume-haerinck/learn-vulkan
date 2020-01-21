@@ -31,7 +31,7 @@ public:
 private:
     bool isDeviceSuitable(VkPhysicalDevice& device, Surface& surface);
     bool checkDeviceExtensionSupport(VkPhysicalDevice& device);
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice& device, Surface& surface);
+    void findQueueFamilies(VkPhysicalDevice& device, Surface& surface);
 
 private:
     VkPhysicalDevice m_device;

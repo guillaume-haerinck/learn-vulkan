@@ -46,7 +46,7 @@ bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice& device, Surface& surface
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
     vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
 
-    QueueFamilyIndices indices = findQueueFamilies(device, surface);
+    findQueueFamilies(device, surface);
     bool extensionsSupported = checkDeviceExtensionSupport(device);
 
     bool swapChainAdequate = false;
@@ -57,7 +57,7 @@ bool PhysicalDevice::isDeviceSuitable(VkPhysicalDevice& device, Surface& surface
 
     return deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU &&
            deviceFeatures.geometryShader &&
-           indices.isComplete() &&
+           m_queueFamilyIndices.isComplete() &&
            extensionsSupported &&
            swapChainAdequate;
 }
@@ -76,7 +76,7 @@ bool PhysicalDevice::checkDeviceExtensionSupport(VkPhysicalDevice& device) {
     return requiredExtensions.empty();
 }
 
-QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device, Surface& surface) {
+void PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device, Surface& surface) {
     QueueFamilyIndices indices;
     uint32_t queueFamilyCount = 0;
 
@@ -102,7 +102,7 @@ QueueFamilyIndices PhysicalDevice::findQueueFamilies(VkPhysicalDevice& device, S
         i++;
     }
 
-    return indices;
+    m_queueFamilyIndices = indices;
 }
 
 //////////////////////////////////////////////////////
