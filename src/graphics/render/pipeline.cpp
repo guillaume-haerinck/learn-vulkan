@@ -212,6 +212,30 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
             debug_break();
         }
     }
+
+    // Framebuffers
+    {
+        m_swapChainFramebuffers.resize(swapChain.getImageViews().size());
+        for (size_t i = 0; i < swapChain.getImageViews().size(); i++) {
+            VkImageView attachments[] = {
+                swapChain.getImageViews()[i]
+            };
+
+            VkFramebufferCreateInfo framebufferInfo = {};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = m_renderPass;
+            framebufferInfo.attachmentCount = 1;
+            framebufferInfo.pAttachments = attachments;
+            framebufferInfo.width = swapChain.getExtent().width;
+            framebufferInfo.height = swapChain.getExtent().height;
+            framebufferInfo.layers = 1;
+
+            if (vkCreateFramebuffer(device.get(), &framebufferInfo, nullptr, &m_swapChainFramebuffers[i]) != VK_SUCCESS) {
+                std::cerr << "[Pipeline] Failed to create framebuffer" << std::endl;
+                debug_break();
+            }
+        }
+    }
     
     // Cleanup
     vkDestroyShaderModule(device.get(), shaderStages[0].module, nullptr);
@@ -219,6 +243,9 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
 }
 
 Pipeline::~Pipeline() {
+    for (auto framebuffer : m_swapChainFramebuffers) {
+        vkDestroyFramebuffer(m_device.get(), framebuffer, nullptr);
+    }
     vkDestroyPipeline(m_device.get(), m_graphicsPipeline, nullptr);
     vkDestroyPipelineLayout(m_device.get(), m_pipelineLayout, nullptr);
     vkDestroyRenderPass(m_device.get(), m_renderPass, nullptr);

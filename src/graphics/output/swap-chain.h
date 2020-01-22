@@ -21,6 +21,7 @@ public:
     VkExtent2D& getExtent() { return m_swapChainExtent; }
     VkFormat& getImageFormat() { return m_swapChainImageFormat; }
     std::vector<VkImageView>& getImageViews() { return m_swapChainImageViews; }
+    
 
 private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);

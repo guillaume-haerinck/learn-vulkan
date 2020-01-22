@@ -28,7 +28,7 @@ public:
     Pipeline(LogicalDevice& device, SwapChain& swapChain);
     ~Pipeline();
 
-    VkRenderPass& getRenderPass() { return m_renderPass; }
+    std::vector<VkFramebuffer>& getFrameBuffers() { return m_swapChainFramebuffers; }
 
 private:
     std::vector<char> readBinaryFile(const std::string& filename);
@@ -39,4 +39,5 @@ private:
     VkPipelineLayout m_pipelineLayout;
     VkRenderPass m_renderPass;
     VkPipeline m_graphicsPipeline;
+    std::vector<VkFramebuffer> m_swapChainFramebuffers;
 };
