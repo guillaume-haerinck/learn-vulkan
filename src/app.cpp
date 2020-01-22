@@ -42,6 +42,8 @@ void App::update() {
         glfwPollEvents();
         drawFrame();
     }
+
+    vkDeviceWaitIdle(m_logicalDevice->get());
 }
 
 void App::drawFrame() {
@@ -83,4 +85,6 @@ void App::drawFrame() {
     }
 
     vkQueuePresentKHR(m_logicalDevice->getPresentQueue(), &presentInfo);
+
+    vkQueueWaitIdle(m_logicalDevice->getPresentQueue());
 }
