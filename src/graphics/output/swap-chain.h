@@ -18,6 +18,8 @@ public:
     ~SwapChain();
 
     static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface);
+    
+    VkSwapchainKHR& get() { return m_swapChain; }
     VkExtent2D& getExtent() { return m_swapChainExtent; }
     VkFormat& getImageFormat() { return m_swapChainImageFormat; }
     std::vector<VkImageView>& getImageViews() { return m_swapChainImageViews; }

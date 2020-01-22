@@ -49,6 +49,8 @@ public:
     ~LogicalDevice();
 
     VkDevice& get() { return m_device; }
+    VkQueue& getGraphicQueue() { return m_graphicsQueue; }
+    VkQueue& getPresentQueue() { return m_presentQueue; }
 
 private:
     VkDevice m_device;

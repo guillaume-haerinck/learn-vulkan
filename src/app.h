@@ -7,6 +7,7 @@
 #include "graphics/setup/devices.h"
 #include "graphics/render/pipeline.h"
 #include "graphics/render/commands.h"
+#include "graphics/render/semaphore.h"
 #include "graphics/output/surface.h"
 #include "graphics/output/swap-chain.h"
 
@@ -19,6 +20,7 @@ public:
 
 private:
     void initWindow();
+    void drawFrame();
 
 private:
     GLFWwindow* m_window;
@@ -30,5 +32,6 @@ private:
     Pipeline* m_pipeline;
     CommandPool* m_commandPool;
     CommandBuffer* m_commandBuffer;
+    Semaphore* m_semaphore;
 };
 

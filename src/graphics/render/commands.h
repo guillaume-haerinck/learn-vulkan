@@ -32,6 +32,8 @@ public:
     CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain);
     ~CommandBuffer();
 
+    std::vector<VkCommandBuffer>& get() { return m_commandBuffers; }
+
 private:
     std::vector<VkCommandBuffer> m_commandBuffers;
 };
