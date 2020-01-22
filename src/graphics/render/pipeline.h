@@ -35,4 +35,6 @@ private:
 private:
     LogicalDevice& m_device;
     VkPipelineLayout m_pipelineLayout;
+    VkRenderPass m_renderPass; // Temp, move to frame-buffer ?
+    VkPipeline m_graphicsPipeline;
 };

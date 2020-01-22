@@ -19,6 +19,7 @@ public:
 
     static SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice& physicalDevice, VkSurfaceKHR& surface);
     VkExtent2D& getExtent() { return m_swapChainExtent; }
+    VkFormat& getImageFormat() { return m_swapChainImageFormat; }
 
 private:
     VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
