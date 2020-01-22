@@ -153,7 +153,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
         }
     }
     
-    // TEMP Render pass, move to framebuffer ?
+    // Render pass
     {
         VkAttachmentDescription colorAttachment = {};
         colorAttachment.format = swapChain.getImageFormat();
@@ -182,7 +182,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
         renderPassInfo.pSubpasses = &subpass;
 
         if (vkCreateRenderPass(device.get(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
-            std::cerr << "[Pipeline] Failed to create pipeline layout" << std::endl;
+            std::cerr << "[Pipeline] Failed to create render pass" << std::endl;
             debug_break();
         }
     }

@@ -5,9 +5,10 @@
 
 #include "graphics/setup/instance.h"
 #include "graphics/setup/devices.h"
+#include "graphics/render/pipeline.h"
 #include "graphics/output/surface.h"
 #include "graphics/output/swap-chain.h"
-#include "graphics/render/pipeline.h"
+#include "graphics/output/frame-buffer.h"
 
 class App {
 public:
@@ -27,5 +28,6 @@ private:
     LogicalDevice* m_logicalDevice;
     SwapChain* m_swapChain;
     Pipeline* m_pipeline;
+    FrameBuffer* m_frameBuffer;
 };
 

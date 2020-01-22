@@ -7,9 +7,13 @@ App::App() {
     m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
     m_logicalDevice = new LogicalDevice(*m_physicalDevice);
     m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
+    m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain);
+    m_frameBuffer = new FrameBuffer(*m_logicalDevice, *m_swapChain, *m_pipeline);
 }
 
 App::~App() {
+    delete m_frameBuffer;
+    delete m_pipeline;
     delete m_swapChain;
     delete m_logicalDevice;
     delete m_physicalDevice;

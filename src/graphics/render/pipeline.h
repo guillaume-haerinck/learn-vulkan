@@ -28,6 +28,8 @@ public:
     Pipeline(LogicalDevice& device, SwapChain& swapChain);
     ~Pipeline();
 
+    VkRenderPass& getRenderPass() { return m_renderPass; }
+
 private:
     std::vector<char> readBinaryFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code, LogicalDevice& device);
@@ -35,6 +37,6 @@ private:
 private:
     LogicalDevice& m_device;
     VkPipelineLayout m_pipelineLayout;
-    VkRenderPass m_renderPass; // Temp, move to frame-buffer ?
+    VkRenderPass m_renderPass;
     VkPipeline m_graphicsPipeline;
 };
