@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "graphics/setup/devices.h"
+#include "graphics/output/swap-chain.h"
 
 //////////////////////////////////////////////////////
 ////////////////// CONSTANT BUFFER ///////////////////
@@ -24,10 +25,14 @@ private:
 
 class Pipeline {
 public:
-    Pipeline(LogicalDevice& device);
+    Pipeline(LogicalDevice& device, SwapChain& swapChain);
     ~Pipeline();
 
 private:
     std::vector<char> readBinaryFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code, LogicalDevice& device);
+
+private:
+    LogicalDevice& m_device;
+    VkPipelineLayout m_pipelineLayout;
 };
