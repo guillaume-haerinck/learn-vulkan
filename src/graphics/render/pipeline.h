@@ -29,6 +29,8 @@ public:
     ~Pipeline();
 
     std::vector<VkFramebuffer>& getFrameBuffers() { return m_swapChainFramebuffers; }
+    VkRenderPass& getRenderPass() { return m_renderPass; }
+    VkPipeline& get() { return m_graphicsPipeline; }
 
 private:
     std::vector<char> readBinaryFile(const std::string& filename);

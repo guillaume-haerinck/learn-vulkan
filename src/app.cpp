@@ -8,9 +8,13 @@ App::App() {
     m_logicalDevice = new LogicalDevice(*m_physicalDevice);
     m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
     m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain);
+    m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
+    m_commandBuffer = new CommandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain);
 }
 
 App::~App() {
+    delete m_commandBuffer;
+    delete m_commandPool;
     delete m_pipeline;
     delete m_swapChain;
     delete m_logicalDevice;

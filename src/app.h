@@ -6,6 +6,7 @@
 #include "graphics/setup/instance.h"
 #include "graphics/setup/devices.h"
 #include "graphics/render/pipeline.h"
+#include "graphics/render/commands.h"
 #include "graphics/output/surface.h"
 #include "graphics/output/swap-chain.h"
 
@@ -27,5 +28,7 @@ private:
     LogicalDevice* m_logicalDevice;
     SwapChain* m_swapChain;
     Pipeline* m_pipeline;
+    CommandPool* m_commandPool;
+    CommandBuffer* m_commandBuffer;
 };
 

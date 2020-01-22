@@ -4,6 +4,7 @@
 
 #include "graphics/setup/devices.h"
 #include "pipeline.h"
+#include "graphics/output/swap-chain.h"
 
 //////////////////////////////////////////////////////
 //////////////////// COMMAND POOL ////////////////////
@@ -28,7 +29,7 @@ private:
 
 class CommandBuffer {
 public:
-    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline);
+    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain);
     ~CommandBuffer();
 
 private:

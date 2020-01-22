@@ -30,7 +30,7 @@ CommandPool::~CommandPool() {
 /////////////////// COMMAND BUFFER ///////////////////
 //////////////////////////////////////////////////////
 
-CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline) {
+CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain) {
     m_commandBuffers.resize(pipeline.getFrameBuffers().size());
 
     VkCommandBufferAllocateInfo allocInfo = {};
@@ -52,6 +52,28 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
 
         if (vkBeginCommandBuffer(m_commandBuffers[i], &beginInfo) != VK_SUCCESS) {
             std::cerr << "[CommandBuffer] Failed to begin recording" << std::endl;
+            debug_break();
+        }
+
+        VkRenderPassBeginInfo renderPassInfo = {};
+        {
+            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassInfo.renderPass = pipeline.getRenderPass();
+            renderPassInfo.framebuffer = pipeline.getFrameBuffers()[i];
+            renderPassInfo.renderArea.offset = {0, 0};
+            renderPassInfo.renderArea.extent = swapChain.getExtent();
+            VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+            renderPassInfo.clearValueCount = 1;
+            renderPassInfo.pClearValues = &clearColor;
+        }
+
+        vkCmdBeginRenderPass(m_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBindPipeline(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.get());
+        vkCmdDraw(m_commandBuffers[i], 3, 1, 0, 0);
+        vkCmdEndRenderPass(m_commandBuffers[i]);
+
+        if (vkEndCommandBuffer(m_commandBuffers[i]) != VK_SUCCESS) {
+            std::cerr << "[CommandBuffer] Failed to end recording" << std::endl;
             debug_break();
         }
     }
