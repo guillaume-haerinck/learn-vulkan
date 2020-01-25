@@ -55,53 +55,34 @@ void App::initWindow() {
 void App::update() {
     while(!glfwWindowShouldClose(m_window)) {
         glfwPollEvents();
-        // drawFrame();
+        drawFrame();
     }
 
-    // vkDeviceWaitIdle(m_logicalDevice->get());
+    m_logicalDevice->get().waitIdle();
 }
 
 void App::drawFrame() {
-    /*
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(m_logicalDevice->get(), m_swapChain->get(), UINT64_MAX, m_semaphore->getImageAvailable(), VK_NULL_HANDLE, &imageIndex);
+    m_logicalDevice->get().acquireNextImageKHR(m_swapChain->get(), UINT64_MAX, m_semaphore->getImageAvailable(), nullptr, &imageIndex);
 
-    VkSemaphore signalSemaphores[] = { m_semaphore->getRenderFinished() };
+    vk::Semaphore signalSemaphores[] = { m_semaphore->getRenderFinished() };
+    vk::Semaphore waitSemaphores[] = { m_semaphore->getImageAvailable() };
+    vk::PipelineStageFlags waitStages[] = { vk::PipelineStageFlagBits::eColorAttachmentOutput };
 
-    VkSubmitInfo submitInfo = {};
-    {
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-        submitInfo.waitSemaphoreCount = 1;
-        VkSemaphore waitSemaphores[] = { m_semaphore->getImageAvailable() };
-        submitInfo.pWaitSemaphores = waitSemaphores;
-        submitInfo.pWaitDstStageMask = waitStages;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &m_commandBuffer->get()[imageIndex];
-        submitInfo.signalSemaphoreCount = 1;
-        submitInfo.pSignalSemaphores = signalSemaphores;
-    }
+    vk::SubmitInfo submitInfo(
+        1, waitSemaphores, waitStages,
+        1, &m_commandBuffer->get()[imageIndex],
+        1, signalSemaphores
+    );
+    m_logicalDevice->getGraphicQueue().submit(submitInfo, nullptr);
 
-    if (vkQueueSubmit(m_logicalDevice->getGraphicQueue(), 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
-        std::cerr << "[App] Failed to submit draw command buffer" << std::endl;
-        debug_break();
-    }
+    vk::SwapchainKHR swapChains[] = { m_swapChain->get() };
+    vk::PresentInfoKHR presentInfo(
+        1, signalSemaphores,
+        1, swapChains,
+        &imageIndex, nullptr
+    );
+    m_logicalDevice->getPresentQueue().presentKHR(presentInfo);
 
-    VkPresentInfoKHR presentInfo = {};
-    {
-        presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-        presentInfo.waitSemaphoreCount = 1;
-        presentInfo.pWaitSemaphores = signalSemaphores;
-
-        VkSwapchainKHR swapChains[] = { m_swapChain->get() };
-        presentInfo.swapchainCount = 1;
-        presentInfo.pSwapchains = swapChains;
-        presentInfo.pImageIndices = &imageIndex;
-        presentInfo.pResults = nullptr; // Optional
-    }
-
-    vkQueuePresentKHR(m_logicalDevice->getPresentQueue(), &presentInfo);
-
-    vkQueueWaitIdle(m_logicalDevice->getPresentQueue());
-    */
+    m_logicalDevice->getPresentQueue().waitIdle();
 }

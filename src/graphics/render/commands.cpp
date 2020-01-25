@@ -31,11 +31,11 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
     m_commandBuffers = device.get().allocateCommandBuffers(allocInfo);
 
     for (size_t i = 0; i < m_commandBuffers.size(); i++) {
-        vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit, nullptr);
+        vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eRenderPassContinue, nullptr);
         m_commandBuffers[i].begin(beginInfo);
 
         vk::ClearValue clearValues[1];
-        vk::ClearColorValue clearColor(std::array<float, 4>{1.0f, 0.0f, 0.0f, 1.0f});
+        vk::ClearColorValue clearColor(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
         clearValues[0].color = clearColor;
         vk::RenderPassBeginInfo renderPassInfo(
             pipeline.getRenderPass(),
