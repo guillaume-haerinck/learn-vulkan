@@ -25,8 +25,8 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
     VkPipelineShaderStageCreateInfo shaderStages[2];
     {
         // TODO create shaders and compile them
-        auto vertShaderCode = readBinaryFile("shaders/vert.spv");
-        auto fragShaderCode = readBinaryFile("shaders/frag.spv");
+        auto vertShaderCode = readBinaryFile("res/shaders/test_vs.spv");
+        auto fragShaderCode = readBinaryFile("res/shaders/test_ps.spv");
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode, device);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode, device);
 
