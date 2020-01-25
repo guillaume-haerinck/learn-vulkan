@@ -37,3 +37,6 @@
 
 # Build directories
 build
+
+# Deps
+dxc

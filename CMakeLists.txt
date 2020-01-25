@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 # /////////////////////////////////////////////////////////////////////////////
 
 file(GLOB_RECURSE MY_SOURCES src/*)
+file(GLOB_RECURSE MY_SHADERS res/shaders/*.hlsl)
 
 # /////////////////////////////////////////////////////////////////////////////
 # /////////////////////////////// DEPENDENCIES ////////////////////////////////
@@ -27,6 +28,8 @@ include_directories(
     res
 )
 
+include(cmake/build-res.cmake)
+
 # /////////////////////////////////////////////////////////////////////////////
 # /////////////////////////////////// BUILD ///////////////////////////////////
 # /////////////////////////////////////////////////////////////////////////////
@@ -39,6 +42,22 @@ target_link_libraries(
     ${GLFW_LIBRARIES}
     ${Vulkan_LIBRARIES}
 )
+
+# Compile hlsl to spir-v
+foreach(shader ${MY_SHADERS})
+    get_filename_component(file_name ${shader} NAME_WLE)
+
+    string(FIND ${file_name} "_vs" isVS REVERSE)
+    if (isVS GREATER -1)
+        compile_hlsl_using_dxc(${shader} ${file_name}.spv "vs_6_5")
+    endif()
+
+    string(FIND ${file_name} "_ps" isPS REVERSE)
+    if (isPS GREATER -1)
+        compile_hlsl_using_dxc(${shader} ${file_name}.spv "ps_6_5")
+    endif()
+
+endforeach()
 
 if (WIN32) 
     # Copy .dll to build folder
