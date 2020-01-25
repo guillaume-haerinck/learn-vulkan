@@ -46,15 +46,19 @@ target_link_libraries(
 # Compile hlsl to spir-v
 foreach(shader ${MY_SHADERS})
     get_filename_component(file_name ${shader} NAME_WLE)
+    get_filename_component(file_dir ${shader} DIRECTORY)
+    add_custom_target(${file_name} ALL DEPENDS ${file_dir}/${file_name}.spv)
 
     string(FIND ${file_name} "_vs" isVS REVERSE)
     if (isVS GREATER -1)
-        compile_hlsl_using_dxc(${shader} ${file_name}.spv "vs_6_5")
+        compile_hlsl_using_dxc(${shader} ${file_dir}/${file_name}.spv "vs_6_5")
+        continue()
     endif()
 
     string(FIND ${file_name} "_ps" isPS REVERSE)
     if (isPS GREATER -1)
-        compile_hlsl_using_dxc(${shader} ${file_name}.spv "ps_6_5")
+        compile_hlsl_using_dxc(${shader} ${file_dir}/${file_name}.spv "ps_6_5")
+        continue()
     endif()
 
 endforeach()

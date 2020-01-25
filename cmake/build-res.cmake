@@ -1,7 +1,7 @@
 
 function(compile_hlsl_using_dxc input_file output_file target)
     add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
+        OUTPUT ${output_file}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMENT "Compiling SPIR-V binary ${input_file}"
         DEPENDS ${input_file}
