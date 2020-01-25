@@ -55,9 +55,9 @@ SwapChain::SwapChain(PhysicalDevice& physicalDevice, LogicalDevice& device, Surf
 }
 
 SwapChain::~SwapChain() {
-    vkDestroySwapchainKHR(m_device.get(), m_swapChain, nullptr);
+    m_device.get().destroySwapchainKHR(m_swapChain);
     for (auto imageView : m_swapChainImageViews) {
-        vkDestroyImageView(m_device.get(), imageView, nullptr);
+        m_device.get().destroyImageView(imageView);
     }
 }
 

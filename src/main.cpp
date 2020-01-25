@@ -1,4 +1,3 @@
-#define NOMINMAX
 #include "app.h"
 
 int main() {

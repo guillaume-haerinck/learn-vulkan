@@ -4,8 +4,6 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 
-/*
-
 //////////////////////////////////////////////////////
 ////////////////// CONSTANT BUFFER ///////////////////
 //////////////////////////////////////////////////////
@@ -24,243 +22,172 @@ ConstantBuffer::~ConstantBuffer()
 
 Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(device) {
     // Shader stages
-    VkPipelineShaderStageCreateInfo shaderStages[2];
+    vk::PipelineShaderStageCreateInfo shaderStages[2];
     {
-        // TODO create shaders and compile them
-        auto vertShaderCode = readBinaryFile("res/shaders/test_vs.spv");
-        auto fragShaderCode = readBinaryFile("res/shaders/test_ps.spv");
-        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode, device);
-        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode, device);
-
-        VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
-        vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-        vertShaderStageInfo.module = vertShaderModule;
-        vertShaderStageInfo.pName = "main";
-        
-        VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
-        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        fragShaderStageInfo.module = fragShaderModule;
-        fragShaderStageInfo.pName = "main";
-
+        std::vector<char> vertShaderCode = readBinaryFile("res/shaders/test_vs.spv");
+        vk::PipelineShaderStageCreateInfo vertShaderStageInfo(
+            vk::PipelineShaderStageCreateFlags(),
+            vk::ShaderStageFlagBits::eVertex,
+            createShaderModule(vertShaderCode, device),
+            "main"
+        );
         shaderStages[0] = vertShaderStageInfo;
+
+        std::vector<char> fragShaderCode = readBinaryFile("res/shaders/test_ps.spv");
+        vk::PipelineShaderStageCreateInfo fragShaderStageInfo(
+            vk::PipelineShaderStageCreateFlags(),
+            vk::ShaderStageFlagBits::eFragment,
+            createShaderModule(fragShaderCode, device),
+            "main"
+        );
         shaderStages[1] = fragShaderStageInfo;
     }
 
-    // Vertex input
-    VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
-    {
-        vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vertexInputInfo.vertexBindingDescriptionCount = 0;
-        vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional
-        vertexInputInfo.vertexAttributeDescriptionCount = 0;
-        vertexInputInfo.pVertexAttributeDescriptions = nullptr; // Optional
-    }
+    // Vertex input & Input assembly
+    vk::PipelineVertexInputStateCreateInfo vertexInputInfo(vk::PipelineVertexInputStateCreateFlags(), 0, nullptr, 0, nullptr);
+    vk::PipelineInputAssemblyStateCreateInfo inputAssembly(vk::PipelineInputAssemblyStateCreateFlags(), vk::PrimitiveTopology::eTriangleList, false);
 
-    // Input assembly
-    VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
-    {
-        inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-        inputAssembly.primitiveRestartEnable = VK_FALSE;
-    }
-
-    // Viewport state
-    VkPipelineViewportStateCreateInfo viewportState = {};
-    {
-        VkViewport viewport = {};
-        viewport.x = 0.0f;
-        viewport.y = 0.0f;
-        viewport.width = (float) swapChain.getExtent().width;
-        viewport.height = (float) swapChain.getExtent().height;
-        viewport.minDepth = 0.0f;
-        viewport.maxDepth = 1.0f;
-        
-        VkRect2D scissor = {};
-        scissor.offset = {0, 0};
-        scissor.extent = swapChain.getExtent();
-
-        viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-        viewportState.viewportCount = 1;
-        viewportState.pViewports = &viewport;
-        viewportState.scissorCount = 1;
-        viewportState.pScissors = &scissor;
-    }
+    // Viewport
+    auto viewport = vk::Viewport(0.0f, 0.0f, (float) swapChain.getExtent().width, (float) swapChain.getExtent().height, 0.0f, 1.0f);
+    auto scisor = vk::Rect2D(vk::Offset2D(0.0f, 0.0f), swapChain.getExtent());
+    vk::PipelineViewportStateCreateInfo viewportState(vk::PipelineViewportStateCreateFlags(), 1, &viewport, 1, &scisor);
 
     // Rasterizer
-    VkPipelineRasterizationStateCreateInfo rasterizer = {};
-    {
-        rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-        rasterizer.depthClampEnable = VK_FALSE;
-        rasterizer.rasterizerDiscardEnable = VK_FALSE;
-        rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-        rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
-        rasterizer.depthBiasEnable = VK_FALSE;
-        rasterizer.depthBiasConstantFactor = 0.0f; // Optional
-        rasterizer.depthBiasClamp = 0.0f; // Optional
-        rasterizer.depthBiasSlopeFactor = 0.0f; // Optional
-    }
+    vk::PipelineRasterizationStateCreateInfo rasterizer(
+        vk::PipelineRasterizationStateCreateFlags(),
+        false,  // depthClamp
+        false,  // rasterizerDiscard
+        vk::PolygonMode::eFill,
+        vk::CullModeFlagBits::eBack,
+        vk::FrontFace::eClockwise,
+        false,  // depthBias
+        0.0f,   // depthBiasConstantFactor
+        0.0f,   // depthBiasClamp
+        0.0f,   // depthBiasSlopeFactor
+        1.0f    // lineWidth
+    );
 
     // Multisampling
-    VkPipelineMultisampleStateCreateInfo multisampling = {};
-    {
-        multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-        multisampling.sampleShadingEnable = VK_FALSE;
-        multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-        multisampling.minSampleShading = 1.0f; // Optional
-        multisampling.pSampleMask = nullptr; // Optional
-        multisampling.alphaToCoverageEnable = VK_FALSE; // Optional
-        multisampling.alphaToOneEnable = VK_FALSE; // Optional
-    }
+    vk::PipelineMultisampleStateCreateInfo multisampling(
+        vk::PipelineMultisampleStateCreateFlags(), vk::SampleCountFlagBits::e1, false, 1.0f, nullptr, false, false
+    );
 
     // Color blending
-    VkPipelineColorBlendStateCreateInfo colorBlending = {};
-    {
-        VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
-        colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-        colorBlendAttachment.blendEnable = VK_FALSE;
-        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
-        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD; // Optional
-        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
-        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD; // Optional
+    auto attachement = vk::PipelineColorBlendAttachmentState(
+        false,  // blend
+        vk::BlendFactor::eOne,
+        vk::BlendFactor::eZero,
+        vk::BlendOp::eAdd,
+        vk::BlendFactor::eOne,
+        vk::BlendFactor::eZero
+    );
+    vk::PipelineColorBlendStateCreateInfo colorBlending(
+        vk::PipelineColorBlendStateCreateFlags(),
+        false,  // logicOp
+        vk::LogicOp::eCopy,
+        1,      // attachementCount
+        &attachement,
+        { 0.0f, 0.0f, 0.0f, 0.0f } // BlendConstants
+    );
 
-        colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-        colorBlending.logicOpEnable = VK_FALSE;
-        colorBlending.logicOp = VK_LOGIC_OP_COPY; // Optional
-        colorBlending.attachmentCount = 1;
-        colorBlending.pAttachments = &colorBlendAttachment;
-        colorBlending.blendConstants[0] = 0.0f; // Optional
-        colorBlending.blendConstants[1] = 0.0f; // Optional
-        colorBlending.blendConstants[2] = 0.0f; // Optional
-        colorBlending.blendConstants[3] = 0.0f; // Optional
-    }
-
-    // Constant buffers, temp move to ConstantBuffer ?
-    {
-        VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
-        pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        pipelineLayoutInfo.setLayoutCount = 0; // Optional
-        pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
-        pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
-        pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
-
-        if (vkCreatePipelineLayout(device.get(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
-            std::cerr << "[Pipeline] Failed to create pipeline layout" << std::endl;
-            debug_break();
-        }
-    }
+    // Constant buffers ? TODO temp move to ConstantBuffer ?
+    vk::PipelineLayoutCreateInfo pipelineLayoutInfo(vk::PipelineLayoutCreateFlags(), 0, nullptr, 0, nullptr);
+    m_pipelineLayout = device.get().createPipelineLayout(pipelineLayoutInfo);
     
-    // Render pass
+    // Render pass, TODO move to a separate class
     {
-        VkAttachmentDescription colorAttachment = {};
-        colorAttachment.format = swapChain.getImageFormat();
-        colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        vk::AttachmentDescription colorAttachment(
+            vk::AttachmentDescriptionFlags(),
+            swapChain.getImageFormat(),
+            vk::SampleCountFlagBits::e1,
+            vk::AttachmentLoadOp::eClear,
+            vk::AttachmentStoreOp::eStore,
+            vk::AttachmentLoadOp::eDontCare,
+            vk::AttachmentStoreOp::eDontCare,
+            vk::ImageLayout::eUndefined,
+            vk::ImageLayout::ePresentSrcKHR
+        );
 
-        VkAttachmentReference colorAttachmentRef = {};
-        colorAttachmentRef.attachment = 0;
-        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        vk::AttachmentReference colorAttachmentRef(0, vk::ImageLayout::eColorAttachmentOptimal);
+        vk::SubpassDescription subpass(
+            vk::SubpassDescriptionFlags(),
+            vk::PipelineBindPoint::eGraphics,
+            0, nullptr,
+            1, &colorAttachmentRef
+        );
 
-        VkSubpassDescription subpass = {};
-        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        subpass.colorAttachmentCount = 1;
-        subpass.pColorAttachments = &colorAttachmentRef;
-
-        VkSubpassDependency dependency = {};
-        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-        dependency.dstSubpass = 0;
-        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.srcAccessMask = 0;
-        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        vk::SubpassDependency dependency(
+            VK_SUBPASS_EXTERNAL, // srcSubpass
+            0, // dstSubpass
+            vk::PipelineStageFlagBits::eColorAttachmentOutput, // srcStage
+            vk::PipelineStageFlagBits::eColorAttachmentOutput, // dstStage
+            vk::AccessFlagBits::eColorAttachmentRead, // srcAccess
+            vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite // dstAccess
+        );
         
-        VkRenderPassCreateInfo renderPassInfo = {};
-        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.attachmentCount = 1;
-        renderPassInfo.pAttachments = &colorAttachment;
-        renderPassInfo.subpassCount = 1;
-        renderPassInfo.pSubpasses = &subpass;
-        renderPassInfo.dependencyCount = 1;
-        renderPassInfo.pDependencies = &dependency;
-
-        if (vkCreateRenderPass(device.get(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
-            std::cerr << "[Pipeline] Failed to create render pass" << std::endl;
-            debug_break();
-        }
+        // Create render pass
+        vk::RenderPassCreateInfo renderPassInfo(
+            vk::RenderPassCreateFlags(),
+            1, &colorAttachment,
+            1, &subpass,
+            1, &dependency
+        );
+        m_renderPass = m_device.get().createRenderPass(renderPassInfo);
     }
     
-    // Create
-    {
-        VkGraphicsPipelineCreateInfo pipelineInfo = {};
-        pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = 2;
-        pipelineInfo.pStages = shaderStages;
-        pipelineInfo.pVertexInputState = &vertexInputInfo;
-        pipelineInfo.pInputAssemblyState = &inputAssembly;
-        pipelineInfo.pViewportState = &viewportState;
-        pipelineInfo.pRasterizationState = &rasterizer;
-        pipelineInfo.pMultisampleState = &multisampling;
-        pipelineInfo.pDepthStencilState = nullptr; // Optional
-        pipelineInfo.pColorBlendState = &colorBlending;
-        pipelineInfo.pDynamicState = nullptr; // Optional
-        pipelineInfo.layout = m_pipelineLayout;
-        pipelineInfo.renderPass = m_renderPass;
-        pipelineInfo.subpass = 0;
-        pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-        pipelineInfo.basePipelineIndex = -1; // Optional
-
-        if (vkCreateGraphicsPipelines(device.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS) {
-            std::cerr << "[Pipeline] Failed to create pipeline" << std::endl;
-            debug_break();
-        }
-    }
+    // Create pipeline
+    vk::GraphicsPipelineCreateInfo pipelineInfo(
+        vk::PipelineCreateFlags(),
+        2, shaderStages,
+        &vertexInputInfo,
+        &inputAssembly,
+        nullptr,
+        &viewportState,
+        &rasterizer,
+        &multisampling,
+        nullptr,
+        &colorBlending,
+        nullptr,
+        m_pipelineLayout,
+        m_renderPass,
+        0,
+        nullptr,
+        -1
+    );
+    m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo);
 
     // Framebuffers
     {
         m_swapChainFramebuffers.resize(swapChain.getImageViews().size());
         for (size_t i = 0; i < swapChain.getImageViews().size(); i++) {
-            VkImageView attachments[] = {
+            vk::ImageView attachments[] = {
                 swapChain.getImageViews()[i]
             };
 
-            VkFramebufferCreateInfo framebufferInfo = {};
-            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-            framebufferInfo.renderPass = m_renderPass;
-            framebufferInfo.attachmentCount = 1;
-            framebufferInfo.pAttachments = attachments;
-            framebufferInfo.width = swapChain.getExtent().width;
-            framebufferInfo.height = swapChain.getExtent().height;
-            framebufferInfo.layers = 1;
-
-            if (vkCreateFramebuffer(device.get(), &framebufferInfo, nullptr, &m_swapChainFramebuffers[i]) != VK_SUCCESS) {
-                std::cerr << "[Pipeline] Failed to create framebuffer" << std::endl;
-                debug_break();
-            }
+            vk::FramebufferCreateInfo framebufferInfo(
+                vk::FramebufferCreateFlags(),
+                m_renderPass,
+                1, attachments,
+                swapChain.getExtent().width,
+                swapChain.getExtent().height,
+                1 // layers
+            );
+            m_swapChainFramebuffers[i] = m_device.get().createFramebuffer(framebufferInfo);
         }
     }
     
     // Cleanup
-    vkDestroyShaderModule(device.get(), shaderStages[0].module, nullptr);
-    vkDestroyShaderModule(device.get(), shaderStages[1].module, nullptr);
+    m_device.get().destroyShaderModule(shaderStages[0].module);
+    m_device.get().destroyShaderModule(shaderStages[1].module);
 }
 
 Pipeline::~Pipeline() {
     for (auto framebuffer : m_swapChainFramebuffers) {
-        vkDestroyFramebuffer(m_device.get(), framebuffer, nullptr);
+        m_device.get().destroyFramebuffer(framebuffer);
     }
-    vkDestroyPipeline(m_device.get(), m_graphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(m_device.get(), m_pipelineLayout, nullptr);
-    vkDestroyRenderPass(m_device.get(), m_renderPass, nullptr);
+    m_device.get().destroyPipeline(m_graphicsPipeline);
+    m_device.get().destroyPipelineLayout(m_pipelineLayout);
+    m_device.get().destroyRenderPass(m_renderPass);
 }
 
 std::vector<char> Pipeline::readBinaryFile(const std::string& filename) {
@@ -280,18 +207,12 @@ std::vector<char> Pipeline::readBinaryFile(const std::string& filename) {
     return buffer;
 }
 
-VkShaderModule Pipeline::createShaderModule(const std::vector<char>& code, LogicalDevice& device) {
-    VkShaderModuleCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+vk::ShaderModule Pipeline::createShaderModule(const std::vector<char>& code, LogicalDevice& device) {
+    vk::ShaderModuleCreateInfo createInfo(
+        vk::ShaderModuleCreateFlags(),
+        code.size(),
+        reinterpret_cast<const uint32_t*>(code.data())
+    );
 
-    VkShaderModule shaderModule;
-    if (vkCreateShaderModule(device.get(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-        std::cerr << "[Pipeline] Failed to create shader module" << std::endl;
-        debug_break();
-    }
-    return shaderModule;
+    return device.get().createShaderModule(createInfo);
 }
-
-*/

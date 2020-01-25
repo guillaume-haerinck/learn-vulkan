@@ -4,7 +4,7 @@
 #include <set>
 #include <debug_break/debug_break.h>
 
-//#include "graphics/output/swap-chain.h"
+#include "graphics/output/swap-chain.h"
 
 //////////////////////////////////////////////////////
 ////////////////// PHYSICAL DEVICE ///////////////////
@@ -41,10 +41,8 @@ bool PhysicalDevice::isDeviceSuitable(vk::PhysicalDevice& device, vk::SurfaceKHR
 
     bool swapChainAdequate = true; // Temp, put to false
     if (extensionsSupported) {
-        /*
-        SwapChainSupportDetails swapChainSupport = SwapChain::querySwapChainSupport(device, surface.get());
+        SwapChainSupportDetails swapChainSupport = SwapChain::querySwapChainSupport(device, surface);
         swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
-        */
     }
 
     return deviceProperties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu &&
