@@ -3,6 +3,8 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 
+/*
+
 Semaphore::Semaphore(LogicalDevice& device) : m_device(device) {
     VkSemaphoreCreateInfo semaphoreInfo = {};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -19,3 +21,5 @@ Semaphore::~Semaphore() {
     vkDestroySemaphore(m_device.get(), m_renderFinishedSemaphore, nullptr);
     vkDestroySemaphore(m_device.get(), m_imageAvailableSemaphore, nullptr);
 }
+
+*/

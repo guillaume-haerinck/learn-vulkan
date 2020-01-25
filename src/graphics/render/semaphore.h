@@ -4,6 +4,8 @@
 
 #include "graphics/setup/devices.h"
 
+/*
+
 class Semaphore {
 public:
     Semaphore(LogicalDevice& device);
@@ -17,3 +19,5 @@ private:
     VkSemaphore m_imageAvailableSemaphore;
     VkSemaphore m_renderFinishedSemaphore;
 };
+
+*/

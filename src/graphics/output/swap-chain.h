@@ -5,6 +5,7 @@
 
 #include "graphics/setup/devices.h"
 #include "surface.h"
+/*
 
 struct SwapChainSupportDetails {
     VkSurfaceCapabilitiesKHR capabilities;
@@ -40,3 +41,5 @@ private:
     VkFormat m_swapChainImageFormat;
     VkExtent2D m_swapChainExtent;
 };
+
+*/

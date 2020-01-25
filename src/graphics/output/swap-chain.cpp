@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include <debug_break/debug_break.h>
+/*
 
 SwapChain::SwapChain(PhysicalDevice& physicalDevice, LogicalDevice& device, Surface& surface) : m_device(device) {
     SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice.get(), surface.get());
@@ -118,10 +119,10 @@ VkExtent2D SwapChain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilit
         const int HEIGHT = 600;
 
         VkExtent2D actualExtent = { WIDTH, HEIGHT };
-        /*
+        
         actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
         actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
-        */
+        
 
         return actualExtent;
     }
@@ -154,3 +155,4 @@ void SwapChain::createImageViews() {
         }
     }
 }
+*/

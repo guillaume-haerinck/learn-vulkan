@@ -35,7 +35,7 @@ Instance::Instance() {
         glfwExtensions
     );
 
-    m_instance =  vk::createInstance(createInfo);
+    m_instance = vk::createInstance(createInfo);
 }
 
 Instance::~Instance() {

@@ -7,6 +7,8 @@
 #include "graphics/setup/devices.h"
 #include "graphics/output/swap-chain.h"
 
+/*
+
 //////////////////////////////////////////////////////
 ////////////////// CONSTANT BUFFER ///////////////////
 //////////////////////////////////////////////////////
@@ -43,3 +45,5 @@ private:
     VkPipeline m_graphicsPipeline;
     std::vector<VkFramebuffer> m_swapChainFramebuffers;
 };
+
+*/

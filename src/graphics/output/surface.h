@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <GLFW/glfw3.h>
 
 #include "graphics/setup/instance.h"
@@ -10,9 +10,9 @@ public:
     Surface(Instance& instance, GLFWwindow* window);
     ~Surface();
 
-    VkSurfaceKHR& get() { return m_surface; }
+    vk::SurfaceKHR& get() { return m_surface; }
 
 private:
-    VkSurfaceKHR m_surface;
+    vk::SurfaceKHR m_surface;
     Instance& m_instance;
 };

@@ -7,8 +7,11 @@ App::App() {
     initWindow();
 
     // https://github.com/KhronosGroup/Vulkan-Hpp/tree/master/samples
+    // https://alain.xyz/blog/raw-vulkan
     try {
         m_vkInstance = new Instance;
+        m_surface = new Surface(*m_vkInstance, m_window);
+        m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
 
     } catch (vk::SystemError e) {
         std::cerr << "vk::SystemError: " << e.what() << std::endl;
@@ -22,8 +25,7 @@ App::App() {
     }
 
     /*
-    m_surface = new Surface(*m_vkInstance, m_window);
-    m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
+    
     m_logicalDevice = new LogicalDevice(*m_physicalDevice);
     m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
     m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain);
@@ -41,9 +43,9 @@ App::~App() {
     delete m_pipeline;
     delete m_swapChain;
     delete m_logicalDevice;
+    */
     delete m_physicalDevice;
     delete m_surface;
-    */
     delete m_vkInstance;
     glfwDestroyWindow(m_window);
     glfwTerminate();
@@ -66,6 +68,7 @@ void App::update() {
 }
 
 void App::drawFrame() {
+    /*
     uint32_t imageIndex;
     vkAcquireNextImageKHR(m_logicalDevice->get(), m_swapChain->get(), UINT64_MAX, m_semaphore->getImageAvailable(), VK_NULL_HANDLE, &imageIndex);
 
@@ -106,4 +109,5 @@ void App::drawFrame() {
     vkQueuePresentKHR(m_logicalDevice->getPresentQueue(), &presentInfo);
 
     vkQueueWaitIdle(m_logicalDevice->getPresentQueue());
+    */
 }

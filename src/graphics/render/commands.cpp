@@ -3,6 +3,8 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 
+/*
+
 //////////////////////////////////////////////////////
 //////////////////// COMMAND POOL ////////////////////
 //////////////////////////////////////////////////////
@@ -82,3 +84,5 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
 CommandBuffer::~CommandBuffer() {
 
 }
+
+*/
