@@ -5,7 +5,23 @@
 
 App::App() {
     initWindow();
-    m_vkInstance = new Instance;
+
+    // https://github.com/KhronosGroup/Vulkan-Hpp/tree/master/samples
+    try {
+        m_vkInstance = new Instance;
+
+    } catch (vk::SystemError e) {
+        std::cerr << "vk::SystemError: " << e.what() << std::endl;
+        debug_break();
+    } catch (const std::exception& e) {
+        std::cerr << "std::exception: " << e.what() << std::endl;
+        debug_break();
+    } catch (...) {
+        std::cerr << "unknown error\n";
+        debug_break();
+    }
+
+    /*
     m_surface = new Surface(*m_vkInstance, m_window);
     m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
     m_logicalDevice = new LogicalDevice(*m_physicalDevice);
@@ -14,9 +30,11 @@ App::App() {
     m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
     m_commandBuffer = new CommandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain);
     m_semaphore = new Semaphore(*m_logicalDevice);
+    */
 }
 
 App::~App() {
+    /*
     delete m_semaphore;
     delete m_commandBuffer;
     delete m_commandPool;
@@ -25,6 +43,7 @@ App::~App() {
     delete m_logicalDevice;
     delete m_physicalDevice;
     delete m_surface;
+    */
     delete m_vkInstance;
     glfwDestroyWindow(m_window);
     glfwTerminate();
@@ -40,10 +59,10 @@ void App::initWindow() {
 void App::update() {
     while(!glfwWindowShouldClose(m_window)) {
         glfwPollEvents();
-        drawFrame();
+        // drawFrame();
     }
 
-    vkDeviceWaitIdle(m_logicalDevice->get());
+    // vkDeviceWaitIdle(m_logicalDevice->get());
 }
 
 void App::drawFrame() {
