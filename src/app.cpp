@@ -53,12 +53,22 @@ void App::initWindow() {
 }
 
 void App::update() {
-    while(!glfwWindowShouldClose(m_window)) {
-        glfwPollEvents();
-        drawFrame();
+    try {
+        while(!glfwWindowShouldClose(m_window)) {
+            glfwPollEvents();
+            drawFrame();
+        }
+        m_logicalDevice->get().waitIdle();
+    } catch (vk::SystemError e) {
+        std::cerr << "vk::SystemError: " << e.what() << std::endl;
+        debug_break();
+    } catch (const std::exception& e) {
+        std::cerr << "std::exception: " << e.what() << std::endl;
+        debug_break();
+    } catch (...) {
+        std::cerr << "unknown error\n";
+        debug_break();
     }
-
-    m_logicalDevice->get().waitIdle();
 }
 
 void App::drawFrame() {
