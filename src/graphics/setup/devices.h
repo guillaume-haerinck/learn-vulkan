@@ -48,12 +48,12 @@ public:
     LogicalDevice(PhysicalDevice& physicalDevice);
     ~LogicalDevice();
 
-    VkDevice& get() { return m_device; }
-    VkQueue& getGraphicQueue() { return m_graphicsQueue; }
-    VkQueue& getPresentQueue() { return m_presentQueue; }
+    vk::Device& get() { return m_device; }
+    vk::Queue& getGraphicQueue() { return m_graphicsQueue; }
+    vk::Queue& getPresentQueue() { return m_presentQueue; }
 
 private:
-    VkDevice m_device;
-    VkQueue m_graphicsQueue;
-    VkQueue m_presentQueue;
+    vk::Device m_device;
+    vk::Queue m_graphicsQueue;
+    vk::Queue m_presentQueue;
 };
