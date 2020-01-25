@@ -8,11 +8,8 @@
 #include "graphics/output/surface.h"
 #include "graphics/output/swap-chain.h"
 #include "graphics/render/pipeline.h"
-/*
 #include "graphics/render/commands.h"
 #include "graphics/render/semaphore.h"
-
-*/
 
 class App {
 public:
@@ -33,10 +30,8 @@ private:
     LogicalDevice* m_logicalDevice;
     SwapChain* m_swapChain;
     Pipeline* m_pipeline;
-    /*
     CommandPool* m_commandPool;
     CommandBuffer* m_commandBuffer;
     Semaphore* m_semaphore;
-    */
 };
 

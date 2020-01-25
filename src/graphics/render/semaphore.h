@@ -4,20 +4,17 @@
 
 #include "graphics/setup/devices.h"
 
-/*
-
 class Semaphore {
 public:
     Semaphore(LogicalDevice& device);
     ~Semaphore();
 
-    VkSemaphore& getImageAvailable() { return m_imageAvailableSemaphore; }
-    VkSemaphore& getRenderFinished() { return m_renderFinishedSemaphore; }
+    vk::Semaphore& getImageAvailable() { return m_imageAvailableSemaphore; }
+    vk::Semaphore& getRenderFinished() { return m_renderFinishedSemaphore; }
 
 private:
     LogicalDevice& m_device;
-    VkSemaphore m_imageAvailableSemaphore;
-    VkSemaphore m_renderFinishedSemaphore;
+    vk::Semaphore m_imageAvailableSemaphore;
+    vk::Semaphore m_renderFinishedSemaphore;
 };
 
-*/

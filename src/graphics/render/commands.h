@@ -6,8 +6,6 @@
 #include "pipeline.h"
 #include "graphics/output/swap-chain.h"
 
-/*
-
 //////////////////////////////////////////////////////
 //////////////////// COMMAND POOL ////////////////////
 //////////////////////////////////////////////////////
@@ -17,11 +15,11 @@ public:
     CommandPool(PhysicalDevice& physicalDevice, LogicalDevice& device);
     ~CommandPool();
 
-    VkCommandPool& get() { return m_commandPool; }
+    vk::CommandPool& get() { return m_commandPool; }
 
 private:
     LogicalDevice& m_device;
-    VkCommandPool m_commandPool;
+    vk::CommandPool m_commandPool;
 };
 
 
@@ -34,10 +32,9 @@ public:
     CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain);
     ~CommandBuffer();
 
-    std::vector<VkCommandBuffer>& get() { return m_commandBuffers; }
+    std::vector<vk::CommandBuffer>& get() { return m_commandBuffers; }
 
 private:
-    std::vector<VkCommandBuffer> m_commandBuffers;
+    std::vector<vk::CommandBuffer> m_commandBuffers;
 };
 
-*/
