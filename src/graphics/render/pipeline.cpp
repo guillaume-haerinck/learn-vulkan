@@ -75,11 +75,13 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
     // Color blending
     auto attachement = vk::PipelineColorBlendAttachmentState(
         false,  // blend
-        vk::BlendFactor::eOne,
-        vk::BlendFactor::eZero,
-        vk::BlendOp::eAdd,
-        vk::BlendFactor::eOne,
-        vk::BlendFactor::eZero
+        vk::BlendFactor::eOne, // srcColorBlendFactor
+        vk::BlendFactor::eZero, // dstColorBlendFactor
+        vk::BlendOp::eAdd, // colorBlendOp
+        vk::BlendFactor::eOne, // srcAlphaBlendFactor
+        vk::BlendFactor::eZero, // dstAlphaBlendFactor
+        vk::BlendOp::eAdd, // alphaBlendOp
+        vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA // colorWriteMask
     );
     vk::PipelineColorBlendStateCreateInfo colorBlending(
         vk::PipelineColorBlendStateCreateFlags(),
