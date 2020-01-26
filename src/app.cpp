@@ -7,8 +7,6 @@
 App::App() {
     initWindow();
 
-    // https://github.com/KhronosGroup/Vulkan-Hpp/tree/master/samples
-    // https://alain.xyz/blog/raw-vulkan
     try {
         m_vkInstance = new Instance;
         m_surface = new Surface(*m_vkInstance, m_window);

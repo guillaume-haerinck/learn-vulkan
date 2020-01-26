@@ -13,3 +13,22 @@ Uses HLSL as shader language, you need to [download](https://ci.appveyor.com/pro
 - [ ] Use Vertex Buffer
 - [ ] Load a model
 - [ ] Annotate drawcalls with debug extension
+
+## Useful links
+
+https://github.com/KhronosGroup/Vulkan-Hpp/tree/master/samples
+
+https://alain.xyz/blog/raw-vulkan
+
+https://www.jeremyong.com/c++/vulkan/graphics/rendering/2018/03/26/how-to-learn-vulkan/
+
+https://devblogs.nvidia.com/vulkan-dos-donts/
+
+https://vulkan-tutorial.com/
+
+https://renderdoc.org/vulkan-in-30-minutes.html
+
+https://github.com/vinjn/awesome-vulkan
+
+http://32ipi028l5q82yhj72224m8j.wpengine.netdna-cdn.com/wp-content/uploads/2016/03/d3d12_vulkan_lessons_learned.pdf
+
