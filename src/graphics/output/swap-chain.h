@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <vector>
 
 #include "graphics/setup/devices.h"
@@ -11,6 +11,8 @@ struct SwapChainSupportDetails {
     std::vector<vk::SurfaceFormatKHR> formats;
     std::vector<vk::PresentModeKHR> presentModes;
 };
+
+// FIXME c++ api on this class stops the triangle from being rendered
 
 class SwapChain {
 public:

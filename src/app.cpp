@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <debug_break/debug_break.h>
+#include <vulkan/vulkan.hpp>
 
 App::App() {
     initWindow();
