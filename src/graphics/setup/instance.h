@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <vector>
 
 class Instance {
@@ -8,11 +8,11 @@ public:
     Instance();
     ~Instance();
 
-    VkInstance& get() { return m_instance; }
+    vk::Instance& get() { return m_instance; }
 
 private:
-    bool doesEveryValidationLayersExists(const std::vector<const char*>& validationLayers, const std::vector<VkLayerProperties>& availableLayers) const;
+    void findBestLayers(const std::vector<vk::LayerProperties>& installed, const std::vector<const char*>& wanted, std::vector<const char*>& out);
 
 private:
-    VkInstance m_instance;
+    vk::Instance m_instance;
 };

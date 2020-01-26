@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "graphics/setup/devices.h"
 
@@ -9,11 +9,12 @@ public:
     Semaphore(LogicalDevice& device);
     ~Semaphore();
 
-    VkSemaphore& getImageAvailable() { return m_imageAvailableSemaphore; }
-    VkSemaphore& getRenderFinished() { return m_renderFinishedSemaphore; }
+    vk::Semaphore& getImageAvailable() { return m_imageAvailableSemaphore; }
+    vk::Semaphore& getRenderFinished() { return m_renderFinishedSemaphore; }
 
 private:
     LogicalDevice& m_device;
-    VkSemaphore m_imageAvailableSemaphore;
-    VkSemaphore m_renderFinishedSemaphore;
+    vk::Semaphore m_imageAvailableSemaphore;
+    vk::Semaphore m_renderFinishedSemaphore;
 };
+

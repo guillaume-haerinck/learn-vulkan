@@ -1,7 +1,7 @@
 #pragma once
 
 #include <optional>
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
 #include "instance.h"
 #include "graphics/output/surface.h"
@@ -24,17 +24,17 @@ public:
     PhysicalDevice(Instance& instance, Surface& surface);
     ~PhysicalDevice();
 
-    VkPhysicalDevice& get() { return m_device; }
+    vk::PhysicalDevice& get() { return m_device; }
     QueueFamilyIndices& getQueueFamilyIndices() { return m_queueFamilyIndices; }
     const std::vector<const char*>& getDeviceExtensions() const { return m_deviceExtensions; }
 
 private:
-    bool isDeviceSuitable(VkPhysicalDevice& device, Surface& surface);
-    bool checkDeviceExtensionSupport(VkPhysicalDevice& device);
-    void findQueueFamilies(VkPhysicalDevice& device, Surface& surface);
+    bool isDeviceSuitable(vk::PhysicalDevice& device, vk::SurfaceKHR& surface);
+    bool checkDeviceExtensionSupport(vk::PhysicalDevice& device);
+    void findQueueFamilies(vk::PhysicalDevice& device, vk::SurfaceKHR& surface);
 
 private:
-    VkPhysicalDevice m_device;
+    vk::PhysicalDevice m_device;
     QueueFamilyIndices m_queueFamilyIndices;
     std::vector<const char*> m_deviceExtensions;
 };
@@ -48,12 +48,12 @@ public:
     LogicalDevice(PhysicalDevice& physicalDevice);
     ~LogicalDevice();
 
-    VkDevice& get() { return m_device; }
-    VkQueue& getGraphicQueue() { return m_graphicsQueue; }
-    VkQueue& getPresentQueue() { return m_presentQueue; }
+    vk::Device& get() { return m_device; }
+    vk::Queue& getGraphicQueue() { return m_graphicsQueue; }
+    vk::Queue& getPresentQueue() { return m_presentQueue; }
 
 private:
-    VkDevice m_device;
-    VkQueue m_graphicsQueue;
-    VkQueue m_presentQueue;
+    vk::Device m_device;
+    vk::Queue m_graphicsQueue;
+    vk::Queue m_presentQueue;
 };

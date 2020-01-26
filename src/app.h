@@ -1,15 +1,14 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
 #include "graphics/setup/instance.h"
 #include "graphics/setup/devices.h"
+#include "graphics/output/surface.h"
+#include "graphics/output/swap-chain.h"
 #include "graphics/render/pipeline.h"
 #include "graphics/render/commands.h"
 #include "graphics/render/semaphore.h"
-#include "graphics/output/surface.h"
-#include "graphics/output/swap-chain.h"
 
 class App {
 public:

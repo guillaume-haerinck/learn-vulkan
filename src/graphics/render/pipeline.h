@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <string>
 #include <vector>
 
@@ -28,18 +28,18 @@ public:
     Pipeline(LogicalDevice& device, SwapChain& swapChain);
     ~Pipeline();
 
-    std::vector<VkFramebuffer>& getFrameBuffers() { return m_swapChainFramebuffers; }
-    VkRenderPass& getRenderPass() { return m_renderPass; }
-    VkPipeline& get() { return m_graphicsPipeline; }
+    std::vector<vk::Framebuffer>& getFrameBuffers() { return m_swapChainFramebuffers; }
+    vk::RenderPass& getRenderPass() { return m_renderPass; }
+    vk::Pipeline& get() { return m_graphicsPipeline; }
 
 private:
     std::vector<char> readBinaryFile(const std::string& filename);
-    VkShaderModule createShaderModule(const std::vector<char>& code, LogicalDevice& device);
+    vk::ShaderModule createShaderModule(const std::vector<char>& code, LogicalDevice& device);
 
 private:
     LogicalDevice& m_device;
-    VkPipelineLayout m_pipelineLayout;
-    VkRenderPass m_renderPass;
-    VkPipeline m_graphicsPipeline;
-    std::vector<VkFramebuffer> m_swapChainFramebuffers;
+    vk::PipelineLayout m_pipelineLayout;
+    vk::RenderPass m_renderPass;
+    vk::Pipeline m_graphicsPipeline;
+    std::vector<vk::Framebuffer> m_swapChainFramebuffers;
 };

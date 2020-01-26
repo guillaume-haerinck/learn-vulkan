@@ -5,68 +5,50 @@
 #include <iostream>
 
 Instance::Instance() {
-    VkApplicationInfo appInfo = {};
-    {
-        appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = "Hello Triangle";
-        appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.pEngineName = "No Engine";
-        appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-        appInfo.apiVersion = VK_API_VERSION_1_1;
-    }
-    
-    VkInstanceCreateInfo createInfo = {};
-    {
-        createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-        createInfo.pApplicationInfo = &appInfo;
-        uint32_t glfwExtensionCount = 0;
-        const char** glfwExtensions;
-        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-        createInfo.enabledExtensionCount = glfwExtensionCount;
-        createInfo.ppEnabledExtensionNames = glfwExtensions;
-        createInfo.enabledLayerCount = 0;
-    }
+    vk::ApplicationInfo appInfo(
+        "Hello Triangle",
+        VK_MAKE_VERSION(1, 0, 0),
+        "No Engine",
+        VK_MAKE_VERSION(1, 0, 0),
+        VK_API_VERSION_1_1
+    );
+
+    std::vector<const char*> layers = {};
 
 #ifndef NDEBUG
-    const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
-    uint32_t layerCount;
-    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-    std::vector<VkLayerProperties> availableLayers(layerCount);
-    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-    createInfo.ppEnabledLayerNames = validationLayers.data();
-    createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-
-    if (!doesEveryValidationLayersExists(validationLayers, availableLayers)) {
-        std::cerr << "[Instance] Some validation layer is missing" << std::endl;
-        debug_break();
-    }
+    std::vector<const char*> wantedLayers = {
+        "VK_LAYER_LUNARG_standard_validation"
+    };
+    std::vector<vk::LayerProperties> installedLayers = vk::enumerateInstanceLayerProperties();
+    findBestLayers(installedLayers, wantedLayers, layers);
 #endif
 
-    if (vkCreateInstance(&createInfo, nullptr, &m_instance) != VK_SUCCESS) {
-        std::cerr << "[Instance] Cannot create instance !" << std::endl;
-        debug_break();
-    }
+    uint32_t glfwExtensionCount = 0;
+    const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+    vk::InstanceCreateInfo createInfo(
+        vk::InstanceCreateFlags(),
+        &appInfo,
+        static_cast<uint32_t>(layers.size()),
+        layers.data(),
+        glfwExtensionCount,
+        glfwExtensions
+    );
+
+    m_instance = vk::createInstance(createInfo);
 }
 
 Instance::~Instance() {
-    vkDestroyInstance(m_instance, nullptr);
+    m_instance.destroy();
 }
 
-bool Instance::doesEveryValidationLayersExists(const std::vector<const char*>& validationLayers, const std::vector<VkLayerProperties>& availableLayers) const {
-    for (const char* layerName : validationLayers) {
-        bool layerFound = false;
-
-        for (const auto& layerProperties : availableLayers) {
-            if (strcmp(layerName, layerProperties.layerName) == 0) {
-                layerFound = true;
-                break;
-            }
-        }
-
-        if (!layerFound) {
-            return false;
-        }
-    }
-
-    return true;
+void Instance::findBestLayers(const std::vector<vk::LayerProperties>& installed, const std::vector<const char*>& wanted, std::vector<const char*>& out) {
+    for (const char* const& w : wanted) {
+		for (vk::LayerProperties const& i : installed) {
+			if (std::string(i.layerName).compare(w) == 0) {
+				out.emplace_back(w);
+				break;
+			}
+		}
+	}
 }
