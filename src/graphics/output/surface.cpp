@@ -4,12 +4,12 @@
 #include <debug_break/debug_break.h>
 
 Surface::Surface(Instance& instance, GLFWwindow* window) : m_instance(instance) {
-    VkSurfaceKHR surface;
-    if (glfwCreateWindowSurface(instance.get(), window, nullptr, &surface) != VK_SUCCESS) {
+    auto psurf = VkSurfaceKHR(m_surface);
+    if (glfwCreateWindowSurface(VkInstance(instance.get()), window, nullptr, &psurf) != VK_SUCCESS) {
         std::cerr << "[Surface] Failed to create" << std::endl;
         debug_break();
     }
-    m_surface = surface;
+    m_surface = vk::SurfaceKHR(psurf);
 }
 
 Surface::~Surface() {

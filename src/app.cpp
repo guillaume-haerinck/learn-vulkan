@@ -9,6 +9,7 @@ App::App() {
 
     try {
         m_vkInstance = new Instance;
+        m_debugReport = new DebugReport(*m_vkInstance);
         m_surface = new Surface(*m_vkInstance, m_window);
         m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
         m_logicalDevice = new LogicalDevice(*m_physicalDevice);
@@ -39,6 +40,7 @@ App::~App() {
     delete m_logicalDevice;
     delete m_physicalDevice;
     delete m_surface;
+    delete m_debugReport;
     delete m_vkInstance;
     glfwDestroyWindow(m_window);
     glfwTerminate();

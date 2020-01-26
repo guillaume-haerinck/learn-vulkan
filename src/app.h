@@ -4,6 +4,7 @@
 
 #include "graphics/setup/instance.h"
 #include "graphics/setup/devices.h"
+#include "graphics/setup/debug-report.h"
 #include "graphics/output/surface.h"
 #include "graphics/output/swap-chain.h"
 #include "graphics/render/pipeline.h"
@@ -24,6 +25,7 @@ private:
 private:
     GLFWwindow* m_window;
     Instance* m_vkInstance;
+    DebugReport* m_debugReport;
     Surface* m_surface;
     PhysicalDevice* m_physicalDevice;
     LogicalDevice* m_logicalDevice;
