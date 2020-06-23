@@ -28,6 +28,8 @@ public:
     QueueFamilyIndices& getQueueFamilyIndices() { return m_queueFamilyIndices; }
     const std::vector<const char*>& getDeviceExtensions() const { return m_deviceExtensions; }
 
+    static unsigned int findMemoryType(vk::PhysicalDeviceMemoryProperties const& memoryProperties, uint32_t typeBits, vk::MemoryPropertyFlags requirementsMask);
+
 private:
     bool isDeviceSuitable(vk::PhysicalDevice& device, vk::SurfaceKHR& surface);
     bool checkDeviceExtensionSupport(vk::PhysicalDevice& device);

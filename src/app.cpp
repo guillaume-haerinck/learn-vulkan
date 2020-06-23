@@ -14,9 +14,10 @@ App::App() {
         m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
         m_logicalDevice = new LogicalDevice(*m_physicalDevice);
         m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
+        m_vertexBuffer = new VertexBuffer(*m_physicalDevice, *m_logicalDevice);
         m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain);
         m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
-        m_commandBuffer = new CommandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain);
+        m_commandBuffer = new CommandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer);
         m_semaphore = new Semaphore(*m_logicalDevice);
 
     } catch (vk::SystemError e) {

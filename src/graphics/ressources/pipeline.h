@@ -6,6 +6,7 @@
 
 #include "graphics/setup/devices.h"
 #include "graphics/output/swap-chain.h"
+#include "graphics/ressources/vertex-buffer.h"
 
 //////////////////////////////////////////////////////
 ////////////////// CONSTANT BUFFER ///////////////////
@@ -42,4 +43,5 @@ private:
     vk::RenderPass m_renderPass;
     vk::Pipeline m_graphicsPipeline;
     std::vector<vk::Framebuffer> m_swapChainFramebuffers;
+    VertexInputDescription m_vbDescription;
 };

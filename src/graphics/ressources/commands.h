@@ -2,9 +2,10 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "graphics/setup/devices.h"
 #include "pipeline.h"
+#include "graphics/setup/devices.h"
 #include "graphics/output/swap-chain.h"
+#include "graphics/ressources/vertex-buffer.h"
 
 //////////////////////////////////////////////////////
 //////////////////// COMMAND POOL ////////////////////
@@ -29,7 +30,7 @@ private:
 
 class CommandBuffer {
 public:
-    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain);
+    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer);
     ~CommandBuffer();
 
     std::vector<vk::CommandBuffer>& get() { return m_commandBuffers; }

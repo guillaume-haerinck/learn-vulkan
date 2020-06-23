@@ -32,6 +32,22 @@ PhysicalDevice::PhysicalDevice(Instance& instance, Surface& surface) {
 PhysicalDevice::~PhysicalDevice() {
 }
 
+unsigned int PhysicalDevice::findMemoryType(vk::PhysicalDeviceMemoryProperties const& memoryProperties, uint32_t typeBits, vk::MemoryPropertyFlags requirementsMask) {
+    uint32_t typeIndex = uint32_t(~0);
+    for (uint32_t i = 0; i < memoryProperties.memoryTypeCount; i++)
+    {
+        if ((typeBits & 1) &&
+            ((memoryProperties.memoryTypes[i].propertyFlags & requirementsMask) == requirementsMask))
+        {
+            typeIndex = i;
+            break;
+        }
+        typeBits >>= 1;
+    }
+    assert(typeIndex != ~0);
+    return typeIndex;
+}
+
 bool PhysicalDevice::isDeviceSuitable(vk::PhysicalDevice& device, vk::SurfaceKHR& surface) {
     vk::PhysicalDeviceProperties deviceProperties = device.getProperties();
     vk::PhysicalDeviceFeatures deviceFeatures = device.getFeatures();

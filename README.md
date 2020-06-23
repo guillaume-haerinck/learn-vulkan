@@ -33,3 +33,5 @@ https://github.com/vinjn/awesome-vulkan
 http://32ipi028l5q82yhj72224m8j.wpengine.netdna-cdn.com/wp-content/uploads/2016/03/d3d12_vulkan_lessons_learned.pdf
 
 https://gpuopen.com/using-the-vulkan-validation-layers/
+
+https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator

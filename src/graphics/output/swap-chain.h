@@ -12,8 +12,6 @@ struct SwapChainSupportDetails {
     std::vector<vk::PresentModeKHR> presentModes;
 };
 
-// FIXME c++ api on this class stops the triangle from being rendered
-
 class SwapChain {
 public:
     SwapChain(PhysicalDevice& physicalDevice, LogicalDevice& device, Surface& surface);

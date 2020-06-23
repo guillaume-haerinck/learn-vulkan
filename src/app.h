@@ -7,9 +7,10 @@
 #include "graphics/setup/debug-report.h"
 #include "graphics/output/surface.h"
 #include "graphics/output/swap-chain.h"
-#include "graphics/render/pipeline.h"
-#include "graphics/render/commands.h"
-#include "graphics/render/semaphore.h"
+#include "graphics/ressources/pipeline.h"
+#include "graphics/ressources/commands.h"
+#include "graphics/ressources/vertex-buffer.h"
+#include "graphics/synchronisation/semaphore.h"
 
 class App {
 public:
@@ -34,5 +35,6 @@ private:
     CommandPool* m_commandPool;
     CommandBuffer* m_commandBuffer;
     Semaphore* m_semaphore;
+    VertexBuffer* m_vertexBuffer;
 };
 

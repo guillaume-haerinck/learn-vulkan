@@ -43,8 +43,16 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
         shaderStages[1] = fragShaderStageInfo;
     }
 
-    // Vertex input & Input assembly
-    vk::PipelineVertexInputStateCreateInfo vertexInputInfo(vk::PipelineVertexInputStateCreateFlags(), 0, nullptr, 0, nullptr);
+    // Vertex input
+    vk::PipelineVertexInputStateCreateInfo vertexInputInfo(
+        vk::PipelineVertexInputStateCreateFlags(), 
+        1, // bindingDescriptionCount
+        &m_vbDescription.getBindingDescription(),
+        m_vbDescription.getAttributeDescriptions().size(), 
+        m_vbDescription.getAttributeDescriptions().data()
+    );
+
+    // Input assembly
     vk::PipelineInputAssemblyStateCreateInfo inputAssembly(vk::PipelineInputAssemblyStateCreateFlags(), vk::PrimitiveTopology::eTriangleList, false);
 
     // Viewport
