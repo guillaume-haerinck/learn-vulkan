@@ -22,7 +22,7 @@ CommandPool::~CommandPool() {
 /////////////////// COMMAND BUFFER ///////////////////
 //////////////////////////////////////////////////////
 
-CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer) {
+CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer) {
     m_commandBuffers.resize(pipeline.getFrameBuffers().size());
 
     vk::CommandBufferAllocateInfo allocInfo(
@@ -47,7 +47,7 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
         m_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
         m_commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.get());
         m_commandBuffers[i].bindVertexBuffers(0, *vertexBuffer.getBuffer(), { 0 });
-        m_commandBuffers[i].draw(vertexBuffer.getVertexCount(), 1, 0, 0);
+        m_commandBuffers[i].draw(vertexBuffer.getDataElementCount(), 1, 0, 0);
         m_commandBuffers[i].endRenderPass();
         m_commandBuffers[i].end();
     }

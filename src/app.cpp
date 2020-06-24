@@ -13,11 +13,13 @@ App::App() {
         m_surface = new Surface(*m_vkInstance, m_window);
         m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
         m_logicalDevice = new LogicalDevice(*m_physicalDevice);
+        m_memoryAllocator = new MemoryAllocator(*m_physicalDevice, *m_logicalDevice);
         m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
-        m_vertexBuffer = new VertexBuffer(*m_physicalDevice, *m_logicalDevice);
+        m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_physicalDevice, *m_memoryAllocator);
+        m_indexBuffer = new IndexBuffer(*m_logicalDevice, *m_memoryAllocator);
         m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain);
         m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
-        m_commandBuffer = new CommandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer);
+        m_commandBuffer = new CommandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer, *m_indexBuffer);
         m_semaphore = new Semaphore(*m_logicalDevice);
 
     } catch (vk::SystemError e) {
@@ -39,6 +41,8 @@ App::~App() {
     delete m_pipeline;
     delete m_swapChain;
     delete m_vertexBuffer;
+    delete m_indexBuffer;
+    delete m_memoryAllocator;
     delete m_logicalDevice;
     delete m_physicalDevice;
     delete m_surface;

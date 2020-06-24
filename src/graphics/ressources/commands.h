@@ -5,7 +5,7 @@
 #include "pipeline.h"
 #include "graphics/setup/devices.h"
 #include "graphics/output/swap-chain.h"
-#include "graphics/ressources/vertex-buffer.h"
+#include "graphics/ressources/buffer.h"
 
 //////////////////////////////////////////////////////
 //////////////////// COMMAND POOL ////////////////////
@@ -30,7 +30,7 @@ private:
 
 class CommandBuffer {
 public:
-    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer);
+    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer);
     ~CommandBuffer();
 
     std::vector<vk::CommandBuffer>& get() { return m_commandBuffers; }

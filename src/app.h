@@ -9,7 +9,8 @@
 #include "graphics/output/swap-chain.h"
 #include "graphics/ressources/pipeline.h"
 #include "graphics/ressources/commands.h"
-#include "graphics/ressources/vertex-buffer.h"
+#include "graphics/ressources/buffer.h"
+#include "graphics/ressources/memory-allocator.h"
 #include "graphics/synchronisation/semaphore.h"
 
 class App {
@@ -36,5 +37,7 @@ private:
     CommandBuffer* m_commandBuffer;
     Semaphore* m_semaphore;
     VertexBuffer* m_vertexBuffer;
+    IndexBuffer* m_indexBuffer;
+    MemoryAllocator* m_memoryAllocator;
 };
 
