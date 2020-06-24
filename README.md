@@ -8,9 +8,10 @@ Uses HLSL as shader language, you need to [download](https://ci.appveyor.com/pro
 
 - [x] Uses C++ API
 - [x] Draw a triangle
+- [x] Use Vertex Buffer
+- [ ] Use constant buffers in shaders
 - [ ] Separate all meaningfull objects into classes
 - [ ] Add doxygen description for each objects
-- [ ] Use Vertex Buffer
 - [ ] Load a model
 - [ ] Annotate drawcalls with debug extension
 

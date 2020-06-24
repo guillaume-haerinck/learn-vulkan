@@ -38,6 +38,7 @@ App::~App() {
     delete m_commandPool;
     delete m_pipeline;
     delete m_swapChain;
+    delete m_vertexBuffer;
     delete m_logicalDevice;
     delete m_physicalDevice;
     delete m_surface;

@@ -32,6 +32,7 @@ public:
     ~VertexBuffer();
 
     vk::UniqueBuffer& getBuffer();
+    size_t getVertexCount();
 
 private:
     LogicalDevice& m_device;

@@ -7,13 +7,11 @@ VertexInputDescription::VertexInputDescription()
 	m_description = vk::VertexInputBindingDescription(0, sizeof(Vertex), vk::VertexInputRate::eVertex);
 	m_inputDescription = {
 		vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32G32Sfloat, offsetof(Vertex, Vertex::position)),
-		vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32G32Sfloat, offsetof(Vertex, Vertex::color))
+		vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, Vertex::color))
 	};
 }
 
-VertexInputDescription::~VertexInputDescription()
-{
-}
+VertexInputDescription::~VertexInputDescription() {}
 
 vk::VertexInputBindingDescription VertexInputDescription::getBindingDescription()
 {
@@ -42,6 +40,7 @@ VertexBuffer::VertexBuffer(PhysicalDevice& physicalDevice, LogicalDevice& device
 	m_buffer = m_device.get().createBufferUnique(info);
 
 	// Memory handling (may use the AMD openGPU lib to handle this in the future)
+	// https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 	{
 		vk::MemoryRequirements memoryRequirements = m_device.get().getBufferMemoryRequirements(m_buffer.get());
 
@@ -57,7 +56,7 @@ VertexBuffer::VertexBuffer(PhysicalDevice& physicalDevice, LogicalDevice& device
 
 		// Copy the data to the device memory
 		unsigned int* pData = static_cast<unsigned int*>(m_device.get().mapMemory(m_deviceMemory.get(), 0, memoryRequirements.size));
-		memcpy(pData, m_vertices.data(), sizeof(m_vertices)); // FIXME TODO size might be wrong
+		memcpy(pData, m_vertices.data(), sizeof(m_vertices));
 		m_device.get().unmapMemory(m_deviceMemory.get());
 
 		m_device.get().bindBufferMemory(m_buffer.get(), m_deviceMemory.get(), 0);
@@ -65,12 +64,14 @@ VertexBuffer::VertexBuffer(PhysicalDevice& physicalDevice, LogicalDevice& device
 	
 }
 
-VertexBuffer::~VertexBuffer()
-{
-	// TODO destroy buffer and free memory ? (maybe done automatically ?)
-}
+VertexBuffer::~VertexBuffer() {}
 
 vk::UniqueBuffer& VertexBuffer::getBuffer()
 {
 	return m_buffer;
+}
+
+size_t VertexBuffer::getVertexCount()
+{
+	return m_vertices.size();
 }

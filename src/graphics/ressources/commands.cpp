@@ -46,8 +46,8 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
 
         m_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
         m_commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.get());
-        m_commandBuffers[i].bindVertexBuffers(0, *vertexBuffer.getBuffer(), { 0 }); // TODO FIMXE may not work
-        m_commandBuffers[i].draw(3, 1, 0, 0); // TODO FIXME size might be wrong
+        m_commandBuffers[i].bindVertexBuffers(0, *vertexBuffer.getBuffer(), { 0 });
+        m_commandBuffers[i].draw(vertexBuffer.getVertexCount(), 1, 0, 0);
         m_commandBuffers[i].endRenderPass();
         m_commandBuffers[i].end();
     }
