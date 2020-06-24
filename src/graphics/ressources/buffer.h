@@ -15,19 +15,12 @@ struct Vertex
     glm::vec3 color;
 };
 
-class VertexInputDescription {
-public:
-    VertexInputDescription();
-    ~VertexInputDescription();
+// TODO use a staging buffer
+// TODO use the same buffer for both vertex, index and uniform (use offset to do so)
 
-    vk::VertexInputBindingDescription getBindingDescription();
-    std::array<vk::VertexInputAttributeDescription, 2> getAttributeDescriptions();
-
-private:
-    vk::VertexInputBindingDescription m_description;
-    std::array<vk::VertexInputAttributeDescription, 2> m_inputDescription;
-};
-
+/**
+ * @brief Abstract class for every buffer (VBO, IBO, UBO)
+ */
 class IBuffer
 {
 public:
@@ -50,8 +43,9 @@ protected:
     vk::UniqueBuffer m_buffer;
 };
 
-// TODO use a staging buffer in vertex buffer
-
+/**
+ * @brief Geometry data
+ */
 class VertexBuffer : public IBuffer {
 public:
     VertexBuffer(LogicalDevice& device, PhysicalDevice& physicalDevice, MemoryAllocator& memoryAllocator);
@@ -66,6 +60,9 @@ private:
     std::array<Vertex, 4> m_vertices;
 };
 
+/**
+ * @brief Geometry data pointers
+ */
 class IndexBuffer : public IBuffer {
 public:
     IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator);
@@ -77,4 +74,22 @@ public:
 
 private:
     std::array<unsigned int, 6> m_indices;
+};
+
+/**
+ * @brief Uniform buffer updated once each frame
+ */
+struct PerFrameUB
+{
+    glm::mat4 world;
+    glm::mat4 viewProj;
+};
+
+class UniformBuffer {
+public:
+    UniformBuffer();
+    ~UniformBuffer();
+
+private:
+
 };
