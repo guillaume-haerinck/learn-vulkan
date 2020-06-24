@@ -25,14 +25,15 @@ void MemoryAllocator::allocateAndBindBuffer(IBuffer& buffer)
 		vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
 	);
 
-	m_deviceMemory = m_device.get().allocateMemoryUnique(
+	vk::UniqueDeviceMemory deviceMemory = m_device.get().allocateMemoryUnique(
 		vk::MemoryAllocateInfo(memoryRequirements.size, memoryTypeIndex)
 	);
 
 	// Copy the data to the device memory
-	unsigned int* pData = static_cast<unsigned int*>(m_device.get().mapMemory(m_deviceMemory.get(), 0, memoryRequirements.size));
+	unsigned int* pData = static_cast<unsigned int*>(m_device.get().mapMemory(deviceMemory.get(), 0, memoryRequirements.size));
 	memcpy(pData, buffer.getData(), buffer.getByteSize());
-	m_device.get().unmapMemory(m_deviceMemory.get());
+	m_device.get().unmapMemory(deviceMemory.get());
 
-	m_device.get().bindBufferMemory(buffer.getBuffer().get(), m_deviceMemory.get(), 0);
+	m_device.get().bindBufferMemory(buffer.getBuffer().get(), deviceMemory.get(), 0);
+	m_deviceMemories.push_back(std::move(deviceMemory)); // transfert unique ptr ownership
 }

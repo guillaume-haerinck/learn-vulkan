@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
+#include <vector>
 
 #include "graphics/setup/devices.h"
 
@@ -18,5 +19,5 @@ public:
 private:
 	PhysicalDevice& m_physicalDevice;
 	LogicalDevice& m_device;
-	vk::UniqueDeviceMemory m_deviceMemory;
+	std::vector<vk::UniqueDeviceMemory> m_deviceMemories;
 };

@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.hpp>
 #include <glm/glm.hpp>
 #include <vector>
+#include <array>
 
 #include "graphics/setup/devices.h"
 #include "graphics/ressources/memory-allocator.h"
@@ -62,11 +63,7 @@ public:
     size_t getByteSize() override { return sizeof(m_vertices); }
 
 private:
-    std::array<Vertex, 3> m_vertices;
-
-    // Temp debug
-    PhysicalDevice& m_physicalDevice;
-    vk::UniqueDeviceMemory m_deviceMemory;
+    std::array<Vertex, 4> m_vertices;
 };
 
 class IndexBuffer : public IBuffer {
@@ -74,10 +71,10 @@ public:
     IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator);
     ~IndexBuffer() {}
 
-    size_t getDataElementCount() override { return m_data.size(); }
-    void* getData() override { return m_data.data(); }
-    size_t getByteSize() override { return sizeof(m_data); }
+    size_t getDataElementCount() override { return m_indices.size(); }
+    void* getData() override { return m_indices.data(); }
+    size_t getByteSize() override { return sizeof(m_indices); }
 
 private:
-    std::vector<unsigned int> m_data;
+    std::array<unsigned int, 6> m_indices;
 };
