@@ -4,8 +4,9 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 
-Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) 
-    : m_device(device), m_pipelineLayout(device)
+Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& descriptorPool, MemoryAllocator& memoryAllocator)
+    : m_device(device), m_pipelineLayout(device), m_uniformBuffer(device, memoryAllocator, swapChain.getImageViews().size()),
+      m_descriptorSets(device, descriptorPool, m_pipelineLayout.getDescriptorSetLayout(), swapChain.getImageViews().size(), m_uniformBuffer)
 {
     // Shader stages
     vk::PipelineShaderStageCreateInfo shaderStages[2];

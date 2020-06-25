@@ -1,5 +1,7 @@
 #include "buffers.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "graphics/setup/devices.h"
 
 VertexBuffer::VertexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator)
@@ -43,7 +45,7 @@ IndexBuffer::IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator
 UniformBuffer::UniformBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, unsigned int swapChainImagesCount) 
     : IBuffer(device, memoryAllocator)
 {
-    m_ubo.world = glm::mat4(1);
+    m_ubo.world = glm::translate(glm::mat4(1), glm::vec3(0.5, 0, 0));
     m_ubo.viewProj = glm::mat4(1);
 
     vk::DeviceSize bufferSize = sizeof(PerFrameUB);

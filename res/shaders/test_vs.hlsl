@@ -16,7 +16,7 @@ struct VSOutput {
 
 VSOutput main(VSInput vin) {
 	VSOutput vout = (VSOutput)0;
-	vout.position = float4(vin.position, 0.0, 1.0);
+	vout.position = mul(float4(vin.position, 0.0, 1.0), world);
 	vout.color = vin.color;
 	return vout;
 }

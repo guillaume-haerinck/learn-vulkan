@@ -49,7 +49,10 @@ DescriptorSetLayout::~DescriptorSetLayout()
 DescriptorPool::DescriptorPool(LogicalDevice& device, unsigned int swapChainImagesCount)
 	: m_device(device)
 {
-	vk::DescriptorPoolSize poolSize(vk::DescriptorType::eUniformBuffer);
+	vk::DescriptorPoolSize poolSize(
+		vk::DescriptorType::eUniformBuffer, 
+		swapChainImagesCount // descriptorCount
+	);
 
 	vk::DescriptorPoolCreateInfo info(
 		vk::DescriptorPoolCreateFlags(),
@@ -63,11 +66,10 @@ DescriptorPool::DescriptorPool(LogicalDevice& device, unsigned int swapChainImag
 
 DescriptorPool::~DescriptorPool()
 {
-	m_device.get().destroyDescriptorPool(m_descriptorPool.get());
 }
 
 
-DescriptorSet::DescriptorSet(LogicalDevice& device, DescriptorPool& descriptorPool, DescriptorSetLayout& descriptorSetLayout, unsigned int swapChainImagesCount, UniformBuffer& uniformBuffer)
+DescriptorSets::DescriptorSets(LogicalDevice& device, DescriptorPool& descriptorPool, DescriptorSetLayout& descriptorSetLayout, unsigned int swapChainImagesCount, UniformBuffer& uniformBuffer)
 	: m_device(device)
 {
 	std::vector<vk::DescriptorSetLayout> layouts(swapChainImagesCount, descriptorSetLayout.get());
@@ -89,15 +91,26 @@ DescriptorSet::DescriptorSet(LogicalDevice& device, DescriptorPool& descriptorPo
 			uniformBuffer.getByteSize(i)
 		);
 
-		// TODO next
+		vk::WriteDescriptorSet writeInfo(
+			m_descriptorSets.at(i).get(),
+			0, // dstBinding
+			0, // dstArrayElement
+			1, // descriptorCount
+			vk::DescriptorType::eUniformBuffer,
+			nullptr, // pImageInfo
+			&bufferInfo,
+			nullptr // pTexelBufferView
+		);
+
+		m_device.get().updateDescriptorSets(1, &writeInfo, 0, nullptr);
 	}
 }
 
-DescriptorSet::~DescriptorSet()
+DescriptorSets::~DescriptorSets()
 {
 }
 
-PipelineLayout::PipelineLayout(LogicalDevice& device) 
+PipelineLayout::PipelineLayout(LogicalDevice& device)
 	: m_device(device), m_descriptorSetLayout(device)
 {
 	vk::PipelineLayoutCreateInfo pipelineLayoutInfo(

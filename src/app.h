@@ -32,6 +32,7 @@ private:
     PhysicalDevice* m_physicalDevice;
     LogicalDevice* m_logicalDevice;
     SwapChain* m_swapChain;
+    DescriptorPool* m_descriptorPool;
     Pipeline* m_pipeline;
     CommandPool* m_commandPool;
     CommandBuffer* m_commandBuffer;

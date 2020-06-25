@@ -57,11 +57,13 @@ private:
 /**
  * @brief Store uniform buffers
  */
-class DescriptorSet
+class DescriptorSets
 {
 public:
-    DescriptorSet(LogicalDevice& device, DescriptorPool& descriptorPool, DescriptorSetLayout& descriptorSetLayout, unsigned int swapChainImagesCount, UniformBuffer& uniformBuffer);
-    ~DescriptorSet();
+    DescriptorSets(LogicalDevice& device, DescriptorPool& descriptorPool, DescriptorSetLayout& descriptorSetLayout, unsigned int swapChainImagesCount, UniformBuffer& uniformBuffer);
+    ~DescriptorSets();
+
+    vk::DescriptorSet& get(unsigned int index) { return m_descriptorSets.at(index).get(); }
 
 private:
     LogicalDevice& m_device;
@@ -78,6 +80,7 @@ public:
 	~PipelineLayout();
 
     vk::PipelineLayout& getLayout() { return m_pipelineLayout; }
+    DescriptorSetLayout& getDescriptorSetLayout() { return m_descriptorSetLayout; }
 
 private:
     LogicalDevice& m_device;
