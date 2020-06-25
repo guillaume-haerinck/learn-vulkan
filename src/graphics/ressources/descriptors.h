@@ -63,11 +63,11 @@ public:
     DescriptorSets(LogicalDevice& device, DescriptorPool& descriptorPool, DescriptorSetLayout& descriptorSetLayout, unsigned int swapChainImagesCount, UniformBuffer& uniformBuffer);
     ~DescriptorSets();
 
-    vk::DescriptorSet& get(unsigned int index) { return m_descriptorSets.at(index).get(); }
+    vk::DescriptorSet& get(unsigned int index) { return m_descriptorSets.at(index); }
 
 private:
     LogicalDevice& m_device;
-    std::vector<vk::UniqueDescriptorSet> m_descriptorSets;
+    std::vector<vk::DescriptorSet> m_descriptorSets;
 };
 
 /**

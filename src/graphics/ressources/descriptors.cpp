@@ -80,7 +80,7 @@ DescriptorSets::DescriptorSets(LogicalDevice& device, DescriptorPool& descriptor
 		layouts.data()
 	);
 
-	m_descriptorSets = device.get().allocateDescriptorSetsUnique(info);
+	m_descriptorSets = device.get().allocateDescriptorSets(info);
 
 	// Populate descriptors
 	for (int i = 0; i < layouts.size(); i++)
@@ -92,7 +92,7 @@ DescriptorSets::DescriptorSets(LogicalDevice& device, DescriptorPool& descriptor
 		);
 
 		vk::WriteDescriptorSet writeInfo(
-			m_descriptorSets.at(i).get(),
+			m_descriptorSets.at(i),
 			0, // dstBinding
 			0, // dstArrayElement
 			1, // descriptorCount
