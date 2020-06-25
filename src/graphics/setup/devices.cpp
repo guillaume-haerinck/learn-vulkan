@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <set>
+#include <string>
 #include <debug_break/debug_break.h>
 
 #include "graphics/output/swap-chain.h"
@@ -73,7 +74,7 @@ bool PhysicalDevice::checkDeviceExtensionSupport(vk::PhysicalDevice& device) {
     std::set<std::string> requiredExtensions(m_deviceExtensions.begin(), m_deviceExtensions.end());
 
     for (const auto& extension : availableExtensions) {
-        requiredExtensions.erase(extension.extensionName);
+        requiredExtensions.erase(std::string(extension.extensionName));
     }
 
     return requiredExtensions.empty();

@@ -1,5 +1,6 @@
 #include "buffers.h"
 
+#include <chrono>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "graphics/setup/devices.h"
@@ -66,4 +67,22 @@ UniformBuffer::UniformBuffer(LogicalDevice& device, MemoryAllocator& memoryAlloc
 
 UniformBuffer::~UniformBuffer()
 {
+}
+
+void UniformBuffer::updateBuffer(unsigned int currentImage)
+{
+    // TODO use push constants instead to update buffer
+
+    static auto startTime = std::chrono::high_resolution_clock::now();
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+    m_ubo.world = glm::rotate(glm::mat4(1), time * glm::radians(90.0f), glm::vec3(0, 0, 1));
+    m_ubo.viewProj = glm::mat4(1);
+    
+    // Copy data
+    vk::MemoryRequirements memoryRequirements = m_device.get().getBufferMemoryRequirements(m_buffers.at(currentImage).get());
+    unsigned int* pData = static_cast<unsigned int*>(m_device.get().mapMemory(m_bufferMemories.at(currentImage).get(), 0, memoryRequirements.size));
+    memcpy(pData, &m_ubo, sizeof(m_ubo));
+    m_device.get().unmapMemory(m_bufferMemories.at(currentImage).get());
 }

@@ -35,7 +35,7 @@ public:
     vk::DescriptorSetLayout& get() { return m_layout.get(); }
 
 private:
-    vk::UniqueDescriptorSetLayout m_layout; // TODO FIXME unique ptr might cause some problems
+    vk::UniqueDescriptorSetLayout m_layout;
 };
 
 /**

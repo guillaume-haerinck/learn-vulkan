@@ -7,8 +7,6 @@
 App::App() {
     initWindow();
 
-    // TODO might put descriptor pool here to be passed along
-
     try {
         m_vkInstance = new Instance;
         m_debugReport = new DebugReport(*m_vkInstance);
@@ -89,6 +87,8 @@ void App::drawFrame() {
     vk::Semaphore signalSemaphores[] = { m_semaphore->getRenderFinished() };
     vk::Semaphore waitSemaphores[] = { m_semaphore->getImageAvailable() };
     vk::PipelineStageFlags waitStages[] = { vk::PipelineStageFlagBits::eColorAttachmentOutput };
+
+    m_pipeline->updateUniformBuffer(imageIndex);
 
     vk::SubmitInfo submitInfo(
         1, waitSemaphores, waitStages,

@@ -36,3 +36,20 @@ http://32ipi028l5q82yhj72224m8j.wpengine.netdna-cdn.com/wp-content/uploads/2016/
 https://gpuopen.com/using-the-vulkan-validation-layers/
 
 https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+
+### Synchronisation
+
+https://mynameismjp.wordpress.com/2018/03/06/breaking-down-barriers-part-1-whats-a-barrier/
+
+https://gpuopen.com/gdc-presentations/2019/gdc-2019-agtd5-breaking-down-barriers.pdf
+
+https://www.khronos.org/assets/uploads/developers/library/2018-vulkanised/05-The%20low-level%20mysteries%20of%20pipeline%20barriers_Vulkanised2018.pdf
+
+https://www.jeremyong.com/vulkan/graphics/rendering/2018/11/22/vulkan-synchronization-primer/
+
+http://cpp-rendering.io/barriers-vulkan-not-difficult/
+
+https://gpuopen.com/performance/#barrier
+
+https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization
+

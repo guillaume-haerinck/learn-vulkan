@@ -182,6 +182,11 @@ Pipeline::~Pipeline() {
     m_device.get().destroyRenderPass(m_renderPass);
 }
 
+void Pipeline::updateUniformBuffer(unsigned int imageIndex)
+{
+    m_uniformBuffer.updateBuffer(imageIndex);
+}
+
 std::vector<char> Pipeline::readBinaryFile(const std::string& filename) {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
