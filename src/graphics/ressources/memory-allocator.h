@@ -14,10 +14,9 @@ public:
 	MemoryAllocator(PhysicalDevice& physicalDevice, LogicalDevice& device);
 	~MemoryAllocator();
 
-	void allocateAndBindBuffer(IBuffer& buffer);
+	vk::UniqueDeviceMemory allocateAndBindBuffer(IBuffer& buffer, unsigned int index = 0, bool copyData = true);
 
 private:
 	PhysicalDevice& m_physicalDevice;
 	LogicalDevice& m_device;
-	std::vector<vk::UniqueDeviceMemory> m_deviceMemories;
 };

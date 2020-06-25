@@ -6,8 +6,8 @@
 
 #include "graphics/setup/devices.h"
 #include "graphics/output/swap-chain.h"
-#include "graphics/ressources/buffer.h"
-#include "graphics/ressources/descriptor.h"
+#include "graphics/ressources/buffers.h"
+#include "graphics/ressources/descriptors.h"
 
 class Pipeline {
 public:
@@ -24,7 +24,7 @@ private:
 
 private:
     LogicalDevice& m_device;
-    vk::PipelineLayout m_pipelineLayout;
+    PipelineLayout m_pipelineLayout;
     vk::RenderPass m_renderPass;
     vk::Pipeline m_graphicsPipeline;
     std::vector<vk::Framebuffer> m_swapChainFramebuffers;

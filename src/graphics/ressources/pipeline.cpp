@@ -4,7 +4,9 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 
-Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(device) {
+Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) 
+    : m_device(device), m_pipelineLayout(device)
+{
     // Shader stages
     vk::PipelineShaderStageCreateInfo shaderStages[2];
     {
@@ -83,10 +85,6 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
         &attachement,
         { 0.0f, 0.0f, 0.0f, 0.0f } // BlendConstants
     );
-
-    // Constant buffers ? TODO temp move to ConstantBuffer ?
-    vk::PipelineLayoutCreateInfo pipelineLayoutInfo(vk::PipelineLayoutCreateFlags(), 0, nullptr, 0, nullptr);
-    m_pipelineLayout = device.get().createPipelineLayout(pipelineLayoutInfo);
     
     // Render pass, TODO move to a separate class
     {
@@ -142,7 +140,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain) : m_device(devic
         nullptr,
         &colorBlending,
         nullptr,
-        m_pipelineLayout,
+        m_pipelineLayout.getLayout(),
         m_renderPass,
         0,
         nullptr,
@@ -180,7 +178,6 @@ Pipeline::~Pipeline() {
         m_device.get().destroyFramebuffer(framebuffer);
     }
     m_device.get().destroyPipeline(m_graphicsPipeline);
-    m_device.get().destroyPipelineLayout(m_pipelineLayout);
     m_device.get().destroyRenderPass(m_renderPass);
 }
 

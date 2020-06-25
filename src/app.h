@@ -9,7 +9,7 @@
 #include "graphics/output/swap-chain.h"
 #include "graphics/ressources/pipeline.h"
 #include "graphics/ressources/commands.h"
-#include "graphics/ressources/buffer.h"
+#include "graphics/ressources/buffers.h"
 #include "graphics/ressources/memory-allocator.h"
 #include "graphics/synchronisation/semaphore.h"
 

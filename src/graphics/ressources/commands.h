@@ -5,7 +5,7 @@
 #include "pipeline.h"
 #include "graphics/setup/devices.h"
 #include "graphics/output/swap-chain.h"
-#include "graphics/ressources/buffer.h"
+#include "graphics/ressources/buffers.h"
 
 //////////////////////////////////////////////////////
 //////////////////// COMMAND POOL ////////////////////

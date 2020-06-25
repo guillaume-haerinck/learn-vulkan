@@ -1,3 +1,9 @@
+cbuffer cbPerFrame : register(b0)
+{
+	float4x4 viewProj;
+	float4x4 world;
+};
+
 struct VSInput {
 	float2 position : SV_POSITION;
 	float3 color : COLOR0;

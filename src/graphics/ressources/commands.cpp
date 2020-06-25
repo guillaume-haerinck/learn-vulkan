@@ -46,8 +46,8 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
 
         m_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
         m_commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.get());
-        m_commandBuffers[i].bindVertexBuffers(0, *vertexBuffer.getBuffer(), { 0 });
-        m_commandBuffers[i].bindIndexBuffer(*indexBuffer.getBuffer(), 0, vk::IndexType::eUint32);
+        m_commandBuffers[i].bindVertexBuffers(0, vertexBuffer.getBuffer(), { 0 });
+        m_commandBuffers[i].bindIndexBuffer(indexBuffer.getBuffer(), 0, vk::IndexType::eUint32);
         m_commandBuffers[i].drawIndexed(indexBuffer.getDataElementCount(), 1, 0, 0, 0);
         m_commandBuffers[i].endRenderPass();
         m_commandBuffers[i].end();
