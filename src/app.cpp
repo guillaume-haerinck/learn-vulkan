@@ -73,6 +73,7 @@ void App::update() {
             glfwPollEvents();
             m_camera.update(m_inputs);
             drawFrame();
+            resetInputs();
         }
         m_logicalDevice->get().waitIdle();
     } catch (vk::SystemError e) {
@@ -130,7 +131,6 @@ void App::processMouseInputs(GLFWwindow* window, int button, int action, int mod
 
 void App::processMousePos(GLFWwindow* window, double xpos, double ypos)
 {
-    // FIMXE seem to not be 0 when no mouse move
     m_inputs.mousePosDelta.x = m_inputs.mousePos.x - xpos;
     m_inputs.mousePosDelta.y = m_inputs.mousePos.y - ypos;
     m_inputs.mousePos = glm::vec2(xpos, ypos);
@@ -139,8 +139,12 @@ void App::processMousePos(GLFWwindow* window, double xpos, double ypos)
 void App::processMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
 {
     m_inputs.mouseWheelDelta = yoffset;
+    m_inputs.camDolly = true;
+}
 
-    // FIMXE not perfect
-    if (yoffset != 0)
-        m_inputs.camDolly = true;
+void App::resetInputs()
+{
+    m_inputs.camDolly = false;
+    m_inputs.mousePosDelta = glm::vec2(0);
+    m_inputs.mouseWheelDelta = 0;
 }
