@@ -20,7 +20,7 @@ public:
     vk::PipelineLayout& getLayout() { return m_pipelineLayout.getLayout(); }
     vk::DescriptorSet& getDescriptorSet(unsigned int index) { return m_descriptorSets.get(index); }
 
-    void updateUniformBuffer(unsigned int imageIndex);
+    void updateUniformBuffer(unsigned int imageIndex, const glm::mat4x4& viewProj);
 
 private:
     std::vector<char> readBinaryFile(const std::string& filename);

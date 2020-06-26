@@ -94,7 +94,7 @@ public:
     void* getData(unsigned int index = 0) override { return &m_ubo; }
     size_t getByteSize(unsigned int index = 0) override { return sizeof(m_ubo); }
 
-    void updateBuffer(unsigned int currentImage);
+    void updateBuffer(unsigned int currentImage, const glm::mat4x4& viewProj);
 
 private:
     PerFrameUB m_ubo;

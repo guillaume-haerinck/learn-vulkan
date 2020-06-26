@@ -147,7 +147,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
         nullptr,
         -1
     );
-    m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo);
+    m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo).value;
 
     // Framebuffers
     {
@@ -182,9 +182,9 @@ Pipeline::~Pipeline() {
     m_device.get().destroyRenderPass(m_renderPass);
 }
 
-void Pipeline::updateUniformBuffer(unsigned int imageIndex)
+void Pipeline::updateUniformBuffer(unsigned int imageIndex, const glm::mat4x4& viewProj)
 {
-    m_uniformBuffer.updateBuffer(imageIndex);
+    m_uniformBuffer.updateBuffer(imageIndex, viewProj);
 }
 
 std::vector<char> Pipeline::readBinaryFile(const std::string& filename) {

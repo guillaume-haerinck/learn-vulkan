@@ -4,8 +4,13 @@
 #include <debug_break/debug_break.h>
 #include <vulkan/vulkan.hpp>
 
+InputAction App::m_inputs;
+
 App::App() {
     initWindow();
+
+    glfwSetMouseButtonCallback(m_window, processMouseInputs);
+    glfwSetCursorPosCallback(m_window, processMousePos);
 
     try {
         m_vkInstance = new Instance;
@@ -65,6 +70,7 @@ void App::update() {
     try {
         while(!glfwWindowShouldClose(m_window)) {
             glfwPollEvents();
+            m_camera.update(m_inputs);
             drawFrame();
         }
         m_logicalDevice->get().waitIdle();
@@ -88,7 +94,7 @@ void App::drawFrame() {
     vk::Semaphore waitSemaphores[] = { m_semaphore->getImageAvailable() };
     vk::PipelineStageFlags waitStages[] = { vk::PipelineStageFlagBits::eColorAttachmentOutput };
 
-    m_pipeline->updateUniformBuffer(imageIndex);
+    m_pipeline->updateUniformBuffer(imageIndex, m_camera.getViewProj());
 
     vk::SubmitInfo submitInfo(
         1, waitSemaphores, waitStages,
@@ -106,4 +112,19 @@ void App::drawFrame() {
     m_logicalDevice->getPresentQueue().presentKHR(presentInfo);
 
     m_logicalDevice->getPresentQueue().waitIdle();
+}
+
+void App::processMouseInputs(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+        m_inputs.camOrbit = true;
+    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+        m_inputs.camOrbit = false;
+}
+
+void App::processMousePos(GLFWwindow* window, double xpos, double ypos)
+{
+    m_inputs.mousePosDelta.x = m_inputs.mousePos.x - xpos;
+    m_inputs.mousePosDelta.y = m_inputs.mousePos.y - ypos;
+    m_inputs.mousePos = glm::vec2(xpos, ypos);
 }

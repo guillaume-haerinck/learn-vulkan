@@ -69,7 +69,7 @@ UniformBuffer::~UniformBuffer()
 {
 }
 
-void UniformBuffer::updateBuffer(unsigned int currentImage)
+void UniformBuffer::updateBuffer(unsigned int currentImage, const glm::mat4x4& viewProj)
 {
     // TODO use push constants instead to update buffer
 
@@ -78,7 +78,7 @@ void UniformBuffer::updateBuffer(unsigned int currentImage)
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
     m_ubo.world = glm::rotate(glm::mat4(1), time * glm::radians(90.0f), glm::vec3(0, 0, 1));
-    m_ubo.viewProj = glm::mat4(1);
+    m_ubo.viewProj = viewProj;
     
     // Copy data
     vk::MemoryRequirements memoryRequirements = m_device.get().getBufferMemoryRequirements(m_buffers.at(currentImage).get());

@@ -12,6 +12,8 @@
 #include "graphics/ressources/buffers.h"
 #include "graphics/ressources/memory-allocator.h"
 #include "graphics/synchronisation/semaphore.h"
+#include "controls/arcball-camera.h"
+#include "controls/input-action.h"
 
 class App {
 public:
@@ -23,6 +25,9 @@ public:
 private:
     void initWindow();
     void drawFrame();
+
+    static void processMouseInputs(GLFWwindow* window, int button, int action, int mods);
+    static void processMousePos(GLFWwindow* window, double xpos, double ypos);
 
 private:
     GLFWwindow* m_window;
@@ -40,5 +45,7 @@ private:
     VertexBuffer* m_vertexBuffer;
     IndexBuffer* m_indexBuffer;
     MemoryAllocator* m_memoryAllocator;
+    ArcballCamera m_camera;
+    static InputAction m_inputs;
 };
 
