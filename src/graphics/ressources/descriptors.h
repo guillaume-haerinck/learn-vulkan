@@ -16,11 +16,11 @@ public:
     ~VertexInputDescription();
 
     vk::VertexInputBindingDescription getBindingDescription();
-    std::array<vk::VertexInputAttributeDescription, 2> getAttributeDescriptions();
+    std::array<vk::VertexInputAttributeDescription, 1> getAttributeDescriptions();
 
 private:
     vk::VertexInputBindingDescription m_description;
-    std::array<vk::VertexInputAttributeDescription, 2> m_inputDescription;
+    std::array<vk::VertexInputAttributeDescription, 1> m_inputDescription;
 };
 
 /**

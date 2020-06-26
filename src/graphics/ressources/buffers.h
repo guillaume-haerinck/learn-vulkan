@@ -11,8 +11,7 @@
 // temp
 struct Vertex
 {
-    glm::vec2 position;
-    glm::vec3 color;
+    glm::vec3 position;
 };
 
 // TODO use a staging buffer
@@ -57,7 +56,7 @@ public:
     size_t getByteSize(unsigned int index = 0) override { return sizeof(m_vertices.at(0)) * m_vertices.size(); }
 
 private:
-    std::vector<Vertex> m_vertices;
+    std::vector<glm::vec3> m_vertices;
 };
 
 /**
