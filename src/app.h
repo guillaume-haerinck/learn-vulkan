@@ -28,6 +28,7 @@ private:
 
     static void processMouseInputs(GLFWwindow* window, int button, int action, int mods);
     static void processMousePos(GLFWwindow* window, double xpos, double ypos);
+    static void processMouseScroll(GLFWwindow* window, double xoffset, double yoffset);
 
 private:
     GLFWwindow* m_window;

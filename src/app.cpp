@@ -11,6 +11,7 @@ App::App() {
 
     glfwSetMouseButtonCallback(m_window, processMouseInputs);
     glfwSetCursorPosCallback(m_window, processMousePos);
+    glfwSetScrollCallback(m_window, processMouseScroll);
 
     try {
         m_vkInstance = new Instance;
@@ -120,11 +121,26 @@ void App::processMouseInputs(GLFWwindow* window, int button, int action, int mod
         m_inputs.camOrbit = true;
     else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
         m_inputs.camOrbit = false;
+
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+        m_inputs.camPan = true;
+    else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+        m_inputs.camPan = false;
 }
 
 void App::processMousePos(GLFWwindow* window, double xpos, double ypos)
 {
+    // FIMXE seem to not be 0 when no mouse move
     m_inputs.mousePosDelta.x = m_inputs.mousePos.x - xpos;
     m_inputs.mousePosDelta.y = m_inputs.mousePos.y - ypos;
     m_inputs.mousePos = glm::vec2(xpos, ypos);
+}
+
+void App::processMouseScroll(GLFWwindow* window, double xoffset, double yoffset)
+{
+    m_inputs.mouseWheelDelta = yoffset;
+
+    // FIMXE not perfect
+    if (yoffset != 0)
+        m_inputs.camDolly = true;
 }

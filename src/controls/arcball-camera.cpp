@@ -1,6 +1,8 @@
 #include "arcball-camera.h"
 #include "arcball-camera.h"
 
+#include <glm/gtc/matrix_access.hpp>
+
 ArcballCamera::ArcballCamera()
 	: m_theta(1), m_phi(1), m_up(1), m_radius(10), m_position(8, 5, 7), m_target(0, 0, 0)
 {
@@ -22,18 +24,36 @@ void ArcballCamera::update(const InputAction& inputs)
 		m_phi += inputs.mousePosDelta.y * 0.01f;
 
 		// Keep phi within -2PI to +2PI for easy 'up' comparison
-		if (m_phi > glm::two_pi<float>()) {
+		if (m_phi > glm::two_pi<float>())
 			m_phi -= glm::two_pi<float>();
-		} else if (m_phi < -glm::two_pi<float>()) {
+		else if (m_phi < -glm::two_pi<float>())
 			m_phi += glm::two_pi<float>();
-		}
 
 		// If phi is between 0 to PI or -PI to -2PI, make 'up' be positive Y, other wise make it negative Y
-		if ((m_phi > 0 && m_phi < glm::pi<float>()) || (m_phi < -glm::pi<float>() && m_phi > -glm::two_pi<float>())) {
+		if ((m_phi > 0 && m_phi < glm::pi<float>()) || (m_phi < -glm::pi<float>() && m_phi > -glm::two_pi<float>()))
 			m_up = 1.0f;
-		} else {
+		else
 			m_up = -1.0f;
-		}
+
+		camHasToBeUpdated = true;
+	}
+
+	if (inputs.camDolly) {
+		if (inputs.mouseWheelDelta > 0 && m_radius >= 2)
+			m_radius -= 1.5f;
+		else if (inputs.mouseWheelDelta < 0)
+			m_radius += 1.5f;
+
+		camHasToBeUpdated = true;
+	}
+
+	if (inputs.camPan) {
+		glm::mat4x4 invView = glm::inverse(m_view);
+		glm::vec4 col0 = glm::normalize(glm::column<glm::mat4x4>(invView, 0));
+		glm::vec4 col1 = glm::normalize(glm::column<glm::mat4x4>(invView, 1));
+		glm::vec4 movement = col0 * inputs.mousePosDelta.x + col1 * -inputs.mousePosDelta.y;
+
+		m_target += glm::vec3(movement.x, movement.y, movement.z) * 0.04f;
 
 		camHasToBeUpdated = true;
 	}
