@@ -54,10 +54,10 @@ public:
     
     size_t getDataElementCount(unsigned int index = 0) override { return m_vertices.size(); }
     void* getData(unsigned int index = 0) override { return m_vertices.data(); }
-    size_t getByteSize(unsigned int index = 0) override { return sizeof(m_vertices); }
+    size_t getByteSize(unsigned int index = 0) override { return sizeof(m_vertices.at(0)) * m_vertices.size(); }
 
 private:
-    std::array<Vertex, 4> m_vertices;
+    std::vector<Vertex> m_vertices;
 };
 
 /**
@@ -70,10 +70,10 @@ public:
 
     size_t getDataElementCount(unsigned int index = 0) override { return m_indices.size(); }
     void* getData(unsigned int index = 0) override { return m_indices.data(); }
-    size_t getByteSize(unsigned int index = 0) override { return sizeof(m_indices); }
+    size_t getByteSize(unsigned int index = 0) override { return sizeof(m_indices.at(0)) * m_indices.size(); }
 
 private:
-    std::array<unsigned int, 6> m_indices; // TODO use and test with std::vector (size bytes calculation problems)
+    std::vector<unsigned int> m_indices;
 };
 
 /**

@@ -8,10 +8,12 @@
 VertexBuffer::VertexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator)
     : IBuffer(device, memoryAllocator)
 {
-    m_vertices[0] = { glm::vec2(-0.5, -0.5), glm::vec3(1, 1, 1) };
-    m_vertices[1] = { glm::vec2(0.5, -0.5), glm::vec3(1, 0, 0) };
-    m_vertices[2] = { glm::vec2(0.5, 0.5), glm::vec3(0, 1, 0) };
-    m_vertices[3] = { glm::vec2(-0.5, 0.5), glm::vec3(0, 0, 1) };
+    m_vertices = {
+        { glm::vec2(-0.5, -0.5), glm::vec3(1, 1, 1) },
+        { glm::vec2(0.5, -0.5), glm::vec3(1, 0, 0) },
+        { glm::vec2(0.5, 0.5), glm::vec3(0, 1, 0) },
+        { glm::vec2(-0.5, 0.5), glm::vec3(0, 0, 1) }
+    };
 
     vk::BufferCreateInfo info(
         vk::BufferCreateFlags(),
