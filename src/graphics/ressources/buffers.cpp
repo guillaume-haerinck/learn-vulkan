@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "graphics/setup/devices.h"
+#include "loaders/gltf-loader.h" // temp
 
 VertexBuffer::VertexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const std::vector<Vertex>& vertices)
     : m_vertices(vertices), IBuffer(device, memoryAllocator)
@@ -21,12 +22,16 @@ VertexBuffer::VertexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocat
     m_bufferMemories.push_back(m_memoryAllocator.allocateAndBindBuffer(*this));
 }
 
-IndexBuffer::IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const std::vector<unsigned int>& indices)
-    : m_indices(indices), IBuffer(device, memoryAllocator)
+IndexBuffer::IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const Model& model)
+    : IBuffer(device, memoryAllocator)
 {
+    m_elementCount = model.indicesCount;
+    m_byteSize = sizeof(model.indices_data.at(0)) * model.indices_data.size();
+    m_indices_data = model.indices_data;
+
     vk::BufferCreateInfo info(
         vk::BufferCreateFlags(),
-        sizeof(m_indices.at(0)) * m_indices.size(),
+        m_byteSize,
         vk::BufferUsageFlagBits::eIndexBuffer,
         vk::SharingMode::eExclusive
     );

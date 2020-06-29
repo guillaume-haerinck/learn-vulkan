@@ -7,6 +7,8 @@
 #include "graphics/setup/devices.h"
 #include "graphics/ressources/memory-allocator.h"
 
+struct Model; // forward declaration
+
 /**
  * @brief Structure of data for each vertices in the engine
  */
@@ -15,6 +17,7 @@ struct Vertex {
     glm::vec3 normal;
     glm::vec2 uv;
 
+    Vertex() {}
     Vertex(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& uv) 
         : position(position), normal(normal), uv(uv) 
     {}
@@ -70,15 +73,17 @@ private:
  */
 class IndexBuffer : public IBuffer {
 public:
-    IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const std::vector<unsigned int>& indices);
+    IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const Model& model);
     ~IndexBuffer() {}
 
-    size_t getDataElementCount(unsigned int index = 0) override { return m_indices.size(); }
-    void* getData(unsigned int index = 0) override { return m_indices.data(); }
-    size_t getByteSize(unsigned int index = 0) override { return sizeof(m_indices.at(0)) * m_indices.size(); }
+    size_t getDataElementCount(unsigned int index = 0) override { return m_elementCount; }
+    void* getData(unsigned int index = 0) override { return m_indices_data.data(); }
+    size_t getByteSize(unsigned int index = 0) override { return m_byteSize; }
 
 private:
-    std::vector<unsigned int> m_indices; // TODO remove, useless to keep data on CPU
+    std::vector<uint8_t> m_indices_data; // TODO remove, useless to keep data on CPU
+    unsigned int m_byteSize;
+    unsigned int m_elementCount;
 };
 
 /**

@@ -54,7 +54,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
         false,  // rasterizerDiscard
         vk::PolygonMode::eFill,
         vk::CullModeFlagBits::eBack,
-        vk::FrontFace::eCounterClockwise,
+        vk::FrontFace::eClockwise,
         false,  // depthBias
         0.0f,   // depthBiasConstantFactor
         0.0f,   // depthBiasClamp
