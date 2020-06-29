@@ -10,3 +10,6 @@
 [submodule "lib/json"]
 	path = lib/json
 	url = https://github.com/nlohmann/json
+[submodule "res/Vulkan-Samples-Assets"]
+	path = res/Vulkan-Samples-Assets
+	url = https://github.com/KhronosGroup/Vulkan-Samples-Assets

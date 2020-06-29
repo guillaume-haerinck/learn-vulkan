@@ -13,6 +13,8 @@ App::App() {
     glfwSetCursorPosCallback(m_window, processMousePos);
     glfwSetScrollCallback(m_window, processMouseScroll);
 
+    Model model = m_loader.loadModelFromFile("TODO");
+
     try {
         m_vkInstance = new Instance;
         m_debugReport = new DebugReport(*m_vkInstance);
@@ -21,8 +23,8 @@ App::App() {
         m_logicalDevice = new LogicalDevice(*m_physicalDevice);
         m_memoryAllocator = new MemoryAllocator(*m_physicalDevice, *m_logicalDevice);
         m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
-        m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_memoryAllocator);
-        m_indexBuffer = new IndexBuffer(*m_logicalDevice, *m_memoryAllocator);
+        m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_memoryAllocator, model.vertices);
+        m_indexBuffer = new IndexBuffer(*m_logicalDevice, *m_memoryAllocator, model.indices);
         m_descriptorPool = new DescriptorPool(*m_logicalDevice, m_swapChain->getImageViews().size());
         m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain, *m_descriptorPool, *m_memoryAllocator);
         m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);

@@ -28,6 +28,8 @@ include_directories(
     ${Vulkan_INCLUDE_DIRS}
     lib
     lib/glm
+    lib/tinygltf
+    lib/json/include
     src
     res
 )

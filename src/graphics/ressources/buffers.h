@@ -53,7 +53,7 @@ protected:
  */
 class VertexBuffer : public IBuffer {
 public:
-    VertexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator);
+    VertexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const std::vector<Vertex>& vertices);
     ~VertexBuffer() {}
 
     
@@ -62,7 +62,7 @@ public:
     size_t getByteSize(unsigned int index = 0) override { return sizeof(m_vertices.at(0)) * m_vertices.size(); }
 
 private:
-    std::vector<Vertex> m_vertices;
+    std::vector<Vertex> m_vertices; // TODO remove, useless to keep data on CPU
 };
 
 /**
@@ -70,7 +70,7 @@ private:
  */
 class IndexBuffer : public IBuffer {
 public:
-    IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator);
+    IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const std::vector<unsigned int>& indices);
     ~IndexBuffer() {}
 
     size_t getDataElementCount(unsigned int index = 0) override { return m_indices.size(); }
@@ -78,7 +78,7 @@ public:
     size_t getByteSize(unsigned int index = 0) override { return sizeof(m_indices.at(0)) * m_indices.size(); }
 
 private:
-    std::vector<unsigned int> m_indices;
+    std::vector<unsigned int> m_indices; // TODO remove, useless to keep data on CPU
 };
 
 /**

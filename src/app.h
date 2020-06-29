@@ -14,6 +14,7 @@
 #include "graphics/synchronisation/semaphore.h"
 #include "controls/arcball-camera.h"
 #include "controls/input-action.h"
+#include "loaders/gltf-loader.h"
 
 class App {
 public:
@@ -48,6 +49,7 @@ private:
     IndexBuffer* m_indexBuffer;
     MemoryAllocator* m_memoryAllocator;
     ArcballCamera m_camera;
+    GLTFLoader m_loader;
     static InputAction m_inputs;
 };
 
