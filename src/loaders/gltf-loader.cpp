@@ -75,19 +75,16 @@ Model GLTFLoader::loadModelFromFile(const char* filePath)
 
 		auto format = getAttributeFormat(&model, gltf_primitive.indices);
 		std::vector<uint8_t> indices_data = { buffer.data.begin() + startByte, buffer.data.begin() + endByte };
-		parsedModel.indicesCount = vertex_count; // wrong
+		parsedModel.indicesCount = accessor.count;
 
 		// Target R32Uint format indices
-		// FIXME wrong indices count
 		switch (format) {
 		case vk::Format::eR16Uint:
 			indices_data = convertUnderlyingDataStride(indices_data, 2, 4);
-			//parsedModel.indicesCount = indices_data.size(); // X2 ?
 			break;
 
 		case vk::Format::eR8Uint:
 			indices_data = convertUnderlyingDataStride(indices_data, 1, 4);
-			//parsedModel.indicesCount = indices_data.size(); // X4 ?
 			break;
 
 		default:
