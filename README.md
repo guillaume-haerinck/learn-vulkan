@@ -34,12 +34,6 @@ Simply run the executable, but beware that the working directory must be this fo
 
 ## Useful links
 
-### Misc
-
-| Link                                                      | Author | Description |
-| --------------------------------------------------------- | ------ | ----------- |
-| [Awesome Vulkan](https://github.com/vinjn/awesome-vulkan) |        |             |
-
 ### Samples
 
 | Link                                                         | Author        | Description                             |
@@ -50,19 +44,21 @@ Simply run the executable, but beware that the working directory must be this fo
 
 ### API Overview
 
-| Link                                                         | Author                     | Description |
-| ------------------------------------------------------------ | -------------------------- | ----------- |
-| [Raw vulkan](https://alain.xyz/blog/raw-vulkan)              | Alain Gavan                |             |
-| [How to learn vulkan](https://www.jeremyong.com/c++/vulkan/graphics/rendering/2018/03/26/how-to-learn-vulkan/) | Jeremy Yong                |             |
-| [Vulkan do and donts](https://devblogs.nvidia.com/vulkan-dos-donts/) | NVidia                     |             |
-| [Vulkan in 30 minutes](https://renderdoc.org/vulkan-in-30-minutes.html) | Baldurk (RenderDoc author) |             |
-| [Lets learn vulkan](https://gpuopen.com/learn/lets-learn-vulkan/) | GPU Open (AMD)             |             |
+| Link                                                         | Author                     | Description                                                  |
+| ------------------------------------------------------------ | -------------------------- | ------------------------------------------------------------ |
+| [Raw vulkan](https://alain.xyz/blog/raw-vulkan)              | Alain Gavan                | Broad presentation of the API                                |
+| [How to learn vulkan](https://www.jeremyong.com/c++/vulkan/graphics/rendering/2018/03/26/how-to-learn-vulkan/) | Jeremy Yong                | Advices on getting started with Vulkan                       |
+| [Vulkan do and donts](https://devblogs.nvidia.com/vulkan-dos-donts/) | NVidia                     | Advices on common performance and development practices      |
+| [Vulkan in 30 minutes](https://renderdoc.org/vulkan-in-30-minutes.html) | Baldurk (RenderDoc author) | Presentation of the API                                      |
+| [Lets learn vulkan](https://gpuopen.com/learn/lets-learn-vulkan/) | GPU Open (AMD)             | Many articles on Vulkan                                      |
+| [NVidia dev blog](https://developer.nvidia.com/Vulkan)       | NVidia                     | Many articles on Vulkan                                      |
+| [Moving to vulkan](https://www.khronos.org/assets/uploads/developers/library/2016-uk-chapter-moving-to-vulkan/Moving-to-Vulkan_Khronos-UK_May16.pdf) | Khronos                    | Excellent presentation on the how and the why of Vulkan when it came out |
 
 ### Libraries
 
-| Link                                                         | Author         | Description |
-| ------------------------------------------------------------ | -------------- | ----------- |
-| [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator) | GPU Open (AMD) |             |
+| Link                                                         | Author         | Description                                          |
+| ------------------------------------------------------------ | -------------- | ---------------------------------------------------- |
+| [Vulkan Memory Allocator](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator) | GPU Open (AMD) | Handles this difficult subject better than you could |
 
 ### Renderer
 
@@ -78,9 +74,7 @@ Simply run the executable, but beware that the working directory must be this fo
 | Link                                                         | Author                           | Description |
 | ------------------------------------------------------------ | -------------------------------- | ----------- |
 | [Breaking down barriers](https://mynameismjp.wordpress.com/2018/03/06/breaking-down-barriers-part-1-whats-a-barrier/) | MJP                              |             |
-| [Breaking down barriers - GDC 2019](
-
-https://gpuopen.com/gdc-presentations/2019/gdc-2019-agtd5-breaking-down-barriers.pdf) | Matt Pettineo                    |             |
+| [Breaking down barriers - GDC 2019](https://gpuopen.com/gdc-presentations/2019/gdc-2019-agtd5-breaking-down-barriers.pdf) | Matt Pettineo                    |             |
 | [Low level mysteries of pipeline barriers - Vulkanised 2018](https://www.khronos.org/assets/uploads/developers/library/2018-vulkanised/05-The%20low-level%20mysteries%20of%20pipeline%20barriers_Vulkanised2018.pdf) | Frederic Garnier, Andrew Garrard |             |
 | [Vulkan synchronisation primer](https://www.jeremyong.com/vulkan/graphics/rendering/2018/11/22/vulkan-synchronization-primer/) | Jeremy Yong                      |             |
 | [Barriers in vulkan are not difficult](http://cpp-rendering.io/barriers-vulkan-not-difficult/) | Antoine Morrier                  |             |
@@ -88,9 +82,16 @@ https://gpuopen.com/gdc-presentations/2019/gdc-2019-agtd5-breaking-down-barriers
 
 ### Performance
 
-| Link                             | Author         | Description |
-| -------------------------------- | -------------- | ----------- |
-| https://gpuopen.com/performance/ | GPU Open (AMD) |             |
+| Link                                                        | Author         | Description |
+| ----------------------------------------------------------- | -------------- | ----------- |
+| [GPU Open on performance](https://gpuopen.com/performance/) | GPU Open (AMD) |             |
+
+### Misc
+
+| Link                                                         | Author                                          | Description |
+| ------------------------------------------------------------ | ----------------------------------------------- | ----------- |
+| [Awesome Vulkan](https://github.com/vinjn/awesome-vulkan)    |                                                 |             |
+| [A trip through the graphic pipeline](https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/) | [Fabian Giesen](https://fgiesen.wordpress.com/) |             |
 
 
 
