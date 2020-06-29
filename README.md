@@ -37,6 +37,20 @@ https://gpuopen.com/using-the-vulkan-validation-layers/
 
 https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 
+https://github.com/SaschaWillems/Vulkan
+
+https://github.com/khronosGroup/Vulkan-samples
+
+### Renderer
+
+https://github.com/bkaradzic/bgfx
+
+https://github.com/zeux/niagara
+
+https://github.com/pumexx/pumex
+
+https://github.com/DiligentGraphics/DiligentEngine
+
 ### Synchronisation
 
 https://mynameismjp.wordpress.com/2018/03/06/breaking-down-barriers-part-1-whats-a-barrier/
