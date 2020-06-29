@@ -5,17 +5,21 @@ cbuffer cbPerFrame : register(b0)
 };
 
 struct VSInput {
-	float3 position : SV_POSITION;
+	float3 position : POSITION;
+	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
 };
 
 struct VSOutput {
 	float4 position : SV_POSITION;
-	float3 color : COLOR0;
+	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
 };
 
 VSOutput main(VSInput vin) {
 	VSOutput vout = (VSOutput)0;
 	vout.position = mul(mul(float4(vin.position, 1.0f), world), viewProj);
-	vout.color = float3(1, 0, 1);
+	vout.normal = abs(vin.normal);
+	vout.uv = vin.uv;
 	return vout;
 }

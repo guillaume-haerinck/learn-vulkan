@@ -3,15 +3,21 @@
 #include <vulkan/vulkan.hpp>
 #include <glm/glm.hpp>
 #include <vector>
-#include <array>
 
 #include "graphics/setup/devices.h"
 #include "graphics/ressources/memory-allocator.h"
 
-// temp
-struct Vertex
-{
+/**
+ * @brief Structure of data for each vertices in the engine
+ */
+struct Vertex {
     glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 uv;
+
+    Vertex(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& uv) 
+        : position(position), normal(normal), uv(uv) 
+    {}
 };
 
 // TODO use a staging buffer
@@ -56,7 +62,7 @@ public:
     size_t getByteSize(unsigned int index = 0) override { return sizeof(m_vertices.at(0)) * m_vertices.size(); }
 
 private:
-    std::vector<glm::vec3> m_vertices;
+    std::vector<Vertex> m_vertices;
 };
 
 /**

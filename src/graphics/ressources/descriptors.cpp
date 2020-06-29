@@ -6,7 +6,9 @@ VertexInputDescription::VertexInputDescription()
 {
 	m_description = vk::VertexInputBindingDescription(0, sizeof(Vertex), vk::VertexInputRate::eVertex);
 	m_inputDescription = {
-		vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, Vertex::position))
+		vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, Vertex::position)),
+		vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, Vertex::normal)),
+		vk::VertexInputAttributeDescription(2, 0, vk::Format::eR32G32Sfloat, offsetof(Vertex, Vertex::uv))
 	};
 }
 
@@ -17,7 +19,7 @@ vk::VertexInputBindingDescription VertexInputDescription::getBindingDescription(
 	return m_description;
 }
 
-std::array<vk::VertexInputAttributeDescription, 1> VertexInputDescription::getAttributeDescriptions()
+std::array<vk::VertexInputAttributeDescription, 3> VertexInputDescription::getAttributeDescriptions()
 {
 	return m_inputDescription;
 }

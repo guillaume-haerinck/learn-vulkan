@@ -1,9 +1,10 @@
 struct PSInput {
 	float4 position : SV_POSITION;
-	float3 color : COLOR0;
+	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
 };
 
 float4 main(PSInput pin) : SV_TARGET
 {
-	return float4(pin.color, 1.0);
+	return float4(pin.normal, 1.0);
 }
