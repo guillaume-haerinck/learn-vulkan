@@ -2,7 +2,11 @@
 
 Adaptation of [vulkan-tutorial](https://vulkan-tutorial.com/) website and other sources to the vulkan c++ API variation. Furthermore, vulkan objects are put into separate classes for a better understanding of lifetime and relationship between objects.
 
-Uses HLSL as shader language, you need to [download](https://ci.appveyor.com/project/antiagainst/directxshadercompiler/branch/master/artifacts) or build [directx shader compiler](https://github.com/microsoft/DirectXShaderCompiler) and use the correct path in CMakeLists.txt for `DXC_COMPILER_PATH`
+## Compiling
+
+`git clone --recurse-submodules https://github.com/guillaume-haerinck/learn-vulkan`
+
+Uses HLSL as shader language, you need to [download](https://ci.appveyor.com/project/antiagainst/directxshadercompiler/branch/master/artifacts) or build [directx shader compiler](https://github.com/microsoft/DirectXShaderCompiler) and use the correct path in CMakeLists.txt for `DXC_COMPILER_PATH`. The build must support SPIR-V generation.
 
 ## Roadmap
 

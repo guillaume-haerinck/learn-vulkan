@@ -27,6 +27,7 @@ add_subdirectory(lib/glfw)
 include_directories(
     ${Vulkan_INCLUDE_DIRS}
     lib
+    lib/glm
     src
     res
 )
