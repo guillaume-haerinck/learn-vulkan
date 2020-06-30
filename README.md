@@ -30,6 +30,7 @@ Simply run the executable, but beware that the working directory must be this fo
 - [x] Use constant buffers in shaders
 - [x] Separate all meaningfull objects into separate classes
 - [x] Load a .gltf model
+- [x] ImGui support
 - [ ] Handle textures
 - [ ] Defered shading
 - [ ] Annotate drawcalls with debug extension

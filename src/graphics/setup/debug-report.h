@@ -26,6 +26,10 @@ public:
         void* pUserData
     );
 
+    static void checkVkResult(VkResult err);
+
+    static std::string vkResultToString(VkResult err);
+
 private:
     Instance& m_instance;
 

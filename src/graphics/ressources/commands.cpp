@@ -1,5 +1,6 @@
 #include "commands.h"
 
+#include <imgui_impl_vulkan.h>
 #include <iostream>
 #include <debug_break/debug_break.h>
 
@@ -22,7 +23,7 @@ CommandPool::~CommandPool() {
 /////////////////// COMMAND BUFFER ///////////////////
 //////////////////////////////////////////////////////
 
-CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer) {
+CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data) {
     m_commandBuffers.resize(pipeline.getFrameBuffers().size());
 
     vk::CommandBufferAllocateInfo allocInfo(
@@ -50,7 +51,7 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
         m_commandBuffers[i].bindIndexBuffer(indexBuffer.getBuffer(), 0, vk::IndexType::eUint32);
         m_commandBuffers[i].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline.getLayout(), 0, 1, &pipeline.getDescriptorSet(i), 0, nullptr);
         m_commandBuffers[i].drawIndexed(indexBuffer.getDataElementCount(), 1, 0, 0, 0);
-        //     ImGui_ImplVulkan_RenderDrawData(draw_data, m_commandBuffers[i]); TODO
+        ImGui_ImplVulkan_RenderDrawData(draw_data, m_commandBuffers[i]);
         m_commandBuffers[i].endRenderPass();
         m_commandBuffers[i].end();
     }

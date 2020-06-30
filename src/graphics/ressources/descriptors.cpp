@@ -47,19 +47,28 @@ DescriptorSetLayout::~DescriptorSetLayout()
 {
 }
 
-DescriptorPool::DescriptorPool(LogicalDevice& device, unsigned int swapChainImagesCount)
+DescriptorPool::DescriptorPool(LogicalDevice& device)
 	: m_device(device)
 {
-	vk::DescriptorPoolSize poolSize(
-		vk::DescriptorType::eUniformBuffer, 
-		swapChainImagesCount // descriptorCount
-	);
+	std::vector<vk::DescriptorPoolSize> poolSizes = {
+		{ vk::DescriptorType::eSampler, 1000 },
+		{ vk::DescriptorType::eCombinedImageSampler, 1000 },
+		{ vk::DescriptorType::eSampledImage, 1000 },
+		{ vk::DescriptorType::eStorageImage, 1000 },
+		{ vk::DescriptorType::eUniformTexelBuffer, 1000 },
+		{ vk::DescriptorType::eStorageTexelBuffer, 1000 },
+		{ vk::DescriptorType::eUniformBuffer, 1000 },
+		{ vk::DescriptorType::eStorageBuffer, 1000 },
+		{ vk::DescriptorType::eUniformBufferDynamic, 1000 },
+		{ vk::DescriptorType::eStorageBufferDynamic, 1000 },
+		{ vk::DescriptorType::eInputAttachment, 1000 }
+	};
 
 	vk::DescriptorPoolCreateInfo info(
 		vk::DescriptorPoolCreateFlags(),
-		swapChainImagesCount,
-		1,
-		&poolSize
+		1000 * poolSizes.size(), // maxSets
+		poolSizes.size(), // poolSizeCount
+		poolSizes.data()
 	);
 
 	m_descriptorPool = device.get().createDescriptorPoolUnique(info);

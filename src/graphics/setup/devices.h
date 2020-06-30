@@ -53,9 +53,11 @@ public:
     vk::Device& get() { return m_device; }
     vk::Queue& getGraphicQueue() { return m_graphicsQueue; }
     vk::Queue& getPresentQueue() { return m_presentQueue; }
+    unsigned int getGraphicFamilyIndex() { return m_graphicFamilyIndex; }
 
 private:
     vk::Device m_device;
     vk::Queue m_graphicsQueue;
     vk::Queue m_presentQueue;
+    unsigned int m_graphicFamilyIndex;
 };

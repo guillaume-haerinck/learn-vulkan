@@ -140,6 +140,7 @@ LogicalDevice::LogicalDevice(PhysicalDevice& physicalDevice) {
 
     m_device = physicalDevice.get().createDevice(createInfo);
 
+    m_graphicFamilyIndex = indices.graphicsFamily.value();
     m_graphicsQueue = m_device.getQueue(indices.graphicsFamily.value(), 0);
     m_presentQueue = m_device.getQueue(indices.presentFamily.value(), 0);
 }

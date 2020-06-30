@@ -25,10 +25,9 @@ App::App() {
         m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
         m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_memoryAllocator, model.vertices);
         m_indexBuffer = new IndexBuffer(*m_logicalDevice, *m_memoryAllocator, model);
-        m_descriptorPool = new DescriptorPool(*m_logicalDevice, m_swapChain->getImageViews().size());
+        m_descriptorPool = new DescriptorPool(*m_logicalDevice);
         m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain, *m_descriptorPool, *m_memoryAllocator);
         m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
-        m_commandBuffer = new CommandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer, *m_indexBuffer);
         m_semaphore = new Semaphore(*m_logicalDevice);
 
     } catch (vk::SystemError e) {
@@ -50,7 +49,6 @@ App::~App() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     delete m_semaphore;
-    delete m_commandBuffer;
     delete m_commandPool;
     delete m_pipeline;
     delete m_descriptorPool;
@@ -85,29 +83,65 @@ void App::initImgui()
     init_info.Instance = m_vkInstance->get();
     init_info.PhysicalDevice = m_physicalDevice->get();
     init_info.Device = m_logicalDevice->get();
-    // init_info.QueueFamily = 
+    init_info.QueueFamily = m_logicalDevice->getGraphicFamilyIndex();
     init_info.Queue = m_logicalDevice->getGraphicQueue();
-    //init_info.PipelineCache = g_PipelineCache;
-    //init_info.DescriptorPool = g_DescriptorPool;
-    //init_info.Allocator = g_Allocator;
-    //init_info.MinImageCount = g_MinImageCount;
-    //init_info.ImageCount = wd->ImageCount;
-    //init_info.CheckVkResultFn = check_vk_result;
-    // ImGui_ImplVulkan_Init(&init_info, );
+    init_info.DescriptorPool = m_descriptorPool->get(); // FIXME
+    init_info.MinImageCount = 2;
+    init_info.ImageCount = m_swapChain->getImageViews().size();
+    init_info.PipelineCache = nullptr;
+    init_info.Allocator = nullptr;
+    init_info.CheckVkResultFn = &DebugReport::checkVkResult;
+    
+    ImGui_ImplVulkan_Init(&init_info, m_pipeline->getRenderPass());
+
+    // Upload Fonts
+    {
+        vk::CommandBufferAllocateInfo allocInfo(
+            m_commandPool->get(), 
+            vk::CommandBufferLevel::ePrimary, 
+            1
+        );
+        auto commandBuffer = m_logicalDevice->get().allocateCommandBuffers(allocInfo).at(0);
+        
+        vk::CommandBufferBeginInfo beginInfo(
+            vk::CommandBufferUsageFlagBits::eOneTimeSubmit, 
+            nullptr
+        );
+        commandBuffer.begin(beginInfo);
+        ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+        commandBuffer.end();
+
+        vk::SubmitInfo submitInfo(
+            0, nullptr, // waitSemaphores
+            nullptr, // waitDstStageMask
+            1, &commandBuffer, // commandBuffers
+            0, nullptr // signalSemaphores
+        );
+        m_logicalDevice->getPresentQueue().submit(submitInfo, nullptr);
+
+        m_logicalDevice->getPresentQueue().waitIdle();
+        ImGui_ImplVulkan_DestroyFontUploadObjects();
+    }
 }
 
 void App::update() {
     try {
         while(!glfwWindowShouldClose(m_window)) {
             glfwPollEvents();
-            //ImGui_ImplVulkan_NewFrame();
-            //ImGui_ImplGlfw_NewFrame();
-            //ImGui::NewFrame();
             m_camera.update(m_inputs);
-            //ImGui::Render();
-            drawFrame(ImGui::GetDrawData());
+            ImGui_ImplVulkan_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            // Temp
+            ImGui::Begin("Hello, world!");
+                ImGui::Text("This is some useful text.");
+            ImGui::End();
+
+            ImGui::EndFrame();
+            ImGui::Render();
+            drawFrame();
             resetInputs();
-            //ImGui::EndFrame();
         }
         m_logicalDevice->get().waitIdle();
     } catch (vk::SystemError e) {
@@ -122,7 +156,7 @@ void App::update() {
     }
 }
 
-void App::drawFrame(ImDrawData* draw_data) {
+void App::drawFrame() {
     uint32_t imageIndex;
     m_logicalDevice->get().acquireNextImageKHR(m_swapChain->get(), UINT64_MAX, m_semaphore->getImageAvailable(), nullptr, &imageIndex);
 
@@ -132,9 +166,10 @@ void App::drawFrame(ImDrawData* draw_data) {
 
     m_pipeline->updateUniformBuffer(imageIndex, m_camera.getViewProj());
 
+    CommandBuffer commandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer, *m_indexBuffer, ImGui::GetDrawData());
     vk::SubmitInfo submitInfo(
         1, waitSemaphores, waitStages,
-        1, &m_commandBuffer->get()[imageIndex],
+        1, &commandBuffer.get()[imageIndex],
         1, signalSemaphores
     );
     m_logicalDevice->getGraphicQueue().submit(submitInfo, nullptr);

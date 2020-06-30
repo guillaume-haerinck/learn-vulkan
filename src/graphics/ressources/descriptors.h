@@ -44,7 +44,7 @@ private:
 class DescriptorPool
 {
 public:
-    DescriptorPool(LogicalDevice& device, unsigned int swapChainImagesCount);
+    DescriptorPool(LogicalDevice& device);
     ~DescriptorPool();
 
     vk::DescriptorPool& get() { return m_descriptorPool.get(); }

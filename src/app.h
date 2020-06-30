@@ -29,7 +29,7 @@ public:
 private:
     void initWindow();
     void initImgui();
-    void drawFrame(ImDrawData* draw_data);
+    void drawFrame();
 
     static void processMouseInputs(GLFWwindow* window, int button, int action, int mods);
     static void processMousePos(GLFWwindow* window, double xpos, double ypos);
@@ -47,7 +47,6 @@ private:
     DescriptorPool* m_descriptorPool;
     Pipeline* m_pipeline;
     CommandPool* m_commandPool;
-    CommandBuffer* m_commandBuffer;
     Semaphore* m_semaphore;
     VertexBuffer* m_vertexBuffer;
     IndexBuffer* m_indexBuffer;

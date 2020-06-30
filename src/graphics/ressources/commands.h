@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
+#include <imgui.h>
 
 #include "pipeline.h"
 #include "graphics/setup/devices.h"
@@ -30,7 +31,7 @@ private:
 
 class CommandBuffer {
 public:
-    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer);
+    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data);
     ~CommandBuffer();
 
     std::vector<vk::CommandBuffer>& get() { return m_commandBuffers; }
