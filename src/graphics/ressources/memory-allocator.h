@@ -7,6 +7,7 @@
 
 // Forward declaration
 class IBuffer;
+class ImageView;
 
 class MemoryAllocator
 {
@@ -15,6 +16,7 @@ public:
 	~MemoryAllocator();
 
 	vk::UniqueDeviceMemory allocateAndBindBuffer(IBuffer& buffer, unsigned int index = 0, bool copyData = true);
+	vk::UniqueDeviceMemory allocateAndBindImage(ImageView& image);
 
 private:
 	PhysicalDevice& m_physicalDevice;

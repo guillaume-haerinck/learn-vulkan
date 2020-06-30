@@ -8,6 +8,7 @@
 #include "graphics/output/swap-chain.h"
 #include "graphics/ressources/buffers.h"
 #include "graphics/ressources/descriptors.h"
+#include "graphics/ressources/images.h"
 
 class Pipeline {
 public:
@@ -35,4 +36,5 @@ private:
     vk::Pipeline m_graphicsPipeline;
     std::vector<vk::Framebuffer> m_swapChainFramebuffers;
     VertexInputDescription m_vbDescription;
+    ImageView m_depthBuffer;
 };

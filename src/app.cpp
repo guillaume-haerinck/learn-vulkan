@@ -137,6 +137,7 @@ void App::update() {
             ImGui::Begin("Hello, world!");
                 ImGui::Text("This is some useful text.");
             ImGui::End();
+            ImGui::ShowDemoWindow();
 
             ImGui::EndFrame();
             ImGui::Render();
@@ -166,6 +167,7 @@ void App::drawFrame() {
 
     m_pipeline->updateUniformBuffer(imageIndex, m_camera.getViewProj());
 
+    // TODO not that great to recreate command buffers each frame, only do it if there are changes
     CommandBuffer commandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer, *m_indexBuffer, ImGui::GetDrawData());
     vk::SubmitInfo submitInfo(
         1, waitSemaphores, waitStages,

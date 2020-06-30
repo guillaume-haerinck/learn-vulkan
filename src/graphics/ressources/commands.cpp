@@ -35,14 +35,15 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
         vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eRenderPassContinue, nullptr);
         m_commandBuffers[i].begin(beginInfo);
 
-        vk::ClearValue clearValues[1];
+        vk::ClearValue clearValues[2];
         vk::ClearColorValue clearColor(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
         clearValues[0].color = clearColor;
+        clearValues[1].depthStencil = {1, 0};
         vk::RenderPassBeginInfo renderPassInfo(
             pipeline.getRenderPass(),
             pipeline.getFrameBuffers()[i],
             vk::Rect2D({ 0, 0 }, swapChain.getExtent()),
-            1, clearValues
+            2, clearValues
         );
 
         m_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);

@@ -1,6 +1,7 @@
 #include "memory-allocator.h"
 
 #include "graphics/ressources/buffers.h"
+#include "graphics/ressources/images.h"
 
 MemoryAllocator::MemoryAllocator(PhysicalDevice& physicalDevice, LogicalDevice& device)
 	: m_physicalDevice(physicalDevice), m_device(device)
@@ -37,5 +38,23 @@ vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindBuffer(IBuffer& buffer, u
 	}
 
 	m_device.get().bindBufferMemory(buffer.getBuffer(index), deviceMemory.get(), 0);
+	return std::move(deviceMemory); // transfert unique ptr ownership
+}
+
+vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindImage(ImageView& image)
+{
+	vk::MemoryRequirements memoryRequirements = m_device.get().getImageMemoryRequirements(image.get());
+
+	unsigned int memoryTypeIndex = PhysicalDevice::findMemoryType(
+		m_physicalDevice.get().getMemoryProperties(),
+		memoryRequirements.memoryTypeBits,
+		vk::MemoryPropertyFlagBits::eDeviceLocal
+	); // FIMXE flags might be wrong, not using a staging buffer
+
+	vk::UniqueDeviceMemory deviceMemory = m_device.get().allocateMemoryUnique(
+		vk::MemoryAllocateInfo(memoryRequirements.size, memoryTypeIndex)
+	);
+	m_device.get().bindImageMemory(image.get(), deviceMemory.get(), 0);
+
 	return std::move(deviceMemory); // transfert unique ptr ownership
 }

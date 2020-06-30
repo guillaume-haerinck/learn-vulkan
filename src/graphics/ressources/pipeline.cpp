@@ -6,7 +6,8 @@
 
 Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& descriptorPool, MemoryAllocator& memoryAllocator)
     : m_device(device), m_pipelineLayout(device), m_uniformBuffer(device, memoryAllocator, swapChain.getImageViews().size()),
-      m_descriptorSets(device, descriptorPool, m_pipelineLayout.getDescriptorSetLayout(), swapChain.getImageViews().size(), m_uniformBuffer)
+      m_descriptorSets(device, descriptorPool, m_pipelineLayout.getDescriptorSetLayout(), swapChain.getImageViews().size(), m_uniformBuffer),
+      m_depthBuffer(device, memoryAllocator)
 {
     // Shader stages
     vk::PipelineShaderStageCreateInfo shaderStages[2];
@@ -89,6 +90,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
     
     // Render pass, TODO move to a separate class
     {
+        // Color buffer
         vk::AttachmentDescription colorAttachment(
             vk::AttachmentDescriptionFlags(),
             swapChain.getImageFormat(),
@@ -100,12 +102,27 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
             vk::ImageLayout::eUndefined,
             vk::ImageLayout::ePresentSrcKHR
         );
-
         vk::AttachmentReference colorAttachmentRef(0, vk::ImageLayout::eColorAttachmentOptimal);
+
+        // Depth buffer
+        vk::AttachmentDescription depthAttachment(
+            vk::AttachmentDescriptionFlags(),
+            vk::Format::eD32Sfloat,
+            vk::SampleCountFlagBits::e1,
+            vk::AttachmentLoadOp::eClear,
+            vk::AttachmentStoreOp::eStore,
+            vk::AttachmentLoadOp::eDontCare,
+            vk::AttachmentStoreOp::eDontCare,
+            vk::ImageLayout::eUndefined,
+            vk::ImageLayout::eDepthStencilAttachmentOptimal
+        );
+        vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthAttachmentOptimal);
+
+        // Handle subpass
         vk::SubpassDescription subpass(
             vk::SubpassDescriptionFlags(),
             vk::PipelineBindPoint::eGraphics,
-            0, nullptr,
+            1, &depthAttachmentRef,
             1, &colorAttachmentRef
         );
 
@@ -117,16 +134,33 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
             vk::AccessFlagBits::eColorAttachmentRead, // srcAccess
             vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite // dstAccess
         );
-        
+
         // Create render pass
+        std::array<vk::AttachmentDescription, 2> attachments = { 
+            colorAttachment, depthAttachment 
+        };
         vk::RenderPassCreateInfo renderPassInfo(
             vk::RenderPassCreateFlags(),
-            1, &colorAttachment,
+            2, attachments.data(),
             1, &subpass,
             1, &dependency
         );
         m_renderPass = m_device.get().createRenderPass(renderPassInfo);
     }
+
+    // Z-Test
+    vk::PipelineDepthStencilStateCreateInfo depthStencil(
+        vk::PipelineDepthStencilStateCreateFlags(),
+        true, // depthTest
+        true, // depthWrite
+        vk::CompareOp::eLess,
+        false, // depthBound
+        false, // stencilTest
+        vk::StencilOpState(), // front
+        vk::StencilOpState(), // back
+        0, // minDepthBound
+        1 // maxDepthBound
+    );
     
     // Create pipeline
     vk::GraphicsPipelineCreateInfo pipelineInfo(
@@ -134,18 +168,18 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
         2, shaderStages,
         &vertexInputInfo,
         &inputAssembly,
-        nullptr,
+        nullptr, // pTessellationState
         &viewportState,
         &rasterizer,
         &multisampling,
-        nullptr,
+        &depthStencil,
         &colorBlending,
-        nullptr,
+        nullptr, // pDynamicState
         m_pipelineLayout.getLayout(),
         m_renderPass,
-        0,
-        nullptr,
-        -1
+        0, // subpass
+        nullptr, // basePipelineHandle
+        -1 // basePipelineIndex
     );
     m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo).value;
 
@@ -154,13 +188,14 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
         m_swapChainFramebuffers.resize(swapChain.getImageViews().size());
         for (size_t i = 0; i < swapChain.getImageViews().size(); i++) {
             vk::ImageView attachments[] = {
-                swapChain.getImageViews()[i]
+                swapChain.getImageViews()[i],
+                m_depthBuffer.getImageView()
             };
 
             vk::FramebufferCreateInfo framebufferInfo(
                 vk::FramebufferCreateFlags(),
                 m_renderPass,
-                1, attachments,
+                2, attachments,
                 swapChain.getExtent().width,
                 swapChain.getExtent().height,
                 1 // layers
