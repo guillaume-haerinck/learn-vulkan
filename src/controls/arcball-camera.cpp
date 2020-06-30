@@ -20,8 +20,8 @@ void ArcballCamera::update(const InputAction& inputs)
 	bool camHasToBeUpdated = false;
 
 	if (inputs.camOrbit) {
-		m_theta -= inputs.mousePosDelta.x * 0.01f;
-		m_phi += inputs.mousePosDelta.y * 0.01f;
+		m_theta += inputs.mousePosDelta.x * 0.01f;
+		m_phi -= inputs.mousePosDelta.y * 0.01f;
 
 		// Keep phi within -2PI to +2PI for easy 'up' comparison
 		if (m_phi > glm::two_pi<float>())
@@ -51,7 +51,7 @@ void ArcballCamera::update(const InputAction& inputs)
 		glm::mat4x4 invView = glm::inverse(m_view);
 		glm::vec4 col0 = glm::normalize(glm::column<glm::mat4x4>(invView, 0));
 		glm::vec4 col1 = glm::normalize(glm::column<glm::mat4x4>(invView, 1));
-		glm::vec4 movement = col0 * inputs.mousePosDelta.x + col1 * -inputs.mousePosDelta.y;
+		glm::vec4 movement = col0 * inputs.mousePosDelta.x + col1 * inputs.mousePosDelta.y;
 
 		m_target += glm::vec3(movement.x, movement.y, movement.z) * 0.04f;
 

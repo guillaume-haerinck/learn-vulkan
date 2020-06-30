@@ -128,7 +128,9 @@ void App::update() {
     try {
         while(!glfwWindowShouldClose(m_window)) {
             glfwPollEvents();
-            m_camera.update(m_inputs);
+            if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
+                m_camera.update(m_inputs);
+
             ImGui_ImplVulkan_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
@@ -197,6 +199,11 @@ void App::processMouseInputs(GLFWwindow* window, int button, int action, int mod
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
         m_inputs.camPan = true;
     else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+        m_inputs.camPan = false;
+
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS)
+        m_inputs.camPan = true;
+    else if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE)
         m_inputs.camPan = false;
 }
 
