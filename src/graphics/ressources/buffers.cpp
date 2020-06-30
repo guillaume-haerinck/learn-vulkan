@@ -43,7 +43,7 @@ IndexBuffer::IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator
 UniformBuffer::UniformBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, unsigned int swapChainImagesCount) 
     : IBuffer(device, memoryAllocator)
 {
-    m_ubo.world = glm::translate(glm::mat4(1), glm::vec3(0.5, 0.5, 0));
+    m_ubo.world = glm::mat4(1);
     m_ubo.viewProj = glm::mat4(1);
 
     vk::DeviceSize bufferSize = sizeof(PerFrameUB);
@@ -74,7 +74,7 @@ void UniformBuffer::updateBuffer(unsigned int currentImage, const glm::mat4x4& v
     auto currentTime = std::chrono::high_resolution_clock::now();
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-    m_ubo.world = glm::rotate(glm::mat4(1), time * glm::radians(90.0f), glm::vec3(0, 0, 1));
+   // m_ubo.world = glm::rotate(glm::mat4(1), time * glm::radians(90.0f), glm::vec3(0, 0, 1));
     m_ubo.viewProj = viewProj;
     
     // Copy data

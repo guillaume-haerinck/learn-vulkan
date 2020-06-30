@@ -1,6 +1,9 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_vulkan.h>
 
 #include "graphics/setup/instance.h"
 #include "graphics/setup/devices.h"
@@ -25,7 +28,8 @@ public:
 
 private:
     void initWindow();
-    void drawFrame();
+    void initImgui();
+    void drawFrame(ImDrawData* draw_data);
 
     static void processMouseInputs(GLFWwindow* window, int button, int action, int mods);
     static void processMousePos(GLFWwindow* window, double xpos, double ypos);

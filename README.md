@@ -29,7 +29,9 @@ Simply run the executable, but beware that the working directory must be this fo
 - [x] Use Vertex Buffer
 - [x] Use constant buffers in shaders
 - [x] Separate all meaningfull objects into separate classes
-- [ ] Load a .gltf model
+- [x] Load a .gltf model
+- [ ] Handle textures
+- [ ] Defered shading
 - [ ] Annotate drawcalls with debug extension
 
 ## Useful links

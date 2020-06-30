@@ -13,3 +13,6 @@
 [submodule "res/Vulkan-Samples-Assets"]
 	path = res/Vulkan-Samples-Assets
 	url = https://github.com/KhronosGroup/Vulkan-Samples-Assets
+[submodule "lib/imgui"]
+	path = lib/imgui
+	url = https://github.com/ocornut/imgui

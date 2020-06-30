@@ -13,7 +13,7 @@ App::App() {
     glfwSetCursorPosCallback(m_window, processMousePos);
     glfwSetScrollCallback(m_window, processMouseScroll);
 
-    Model model = m_loader.loadModelFromFile("res/Vulkan-Samples-Assets/scenes/torusknot.gltf");
+    Model model = m_loader.loadModelFromFile("res/Vulkan-Samples-Assets/scenes/teapot.gltf");
 
     try {
         m_vkInstance = new Instance;
@@ -41,9 +41,14 @@ App::App() {
         std::cerr << "unknown error\n";
         debug_break();
     }
+
+    initImgui();
 }
 
 App::~App() {
+    ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     delete m_semaphore;
     delete m_commandBuffer;
     delete m_commandPool;
@@ -69,13 +74,40 @@ void App::initWindow() {
     m_window = glfwCreateWindow(800, 600, "Vulkan window", nullptr, nullptr); // TODO set size elsewhere
 }
 
+void App::initImgui()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::StyleColorsDark();
+    
+    ImGui_ImplGlfw_InitForVulkan(m_window, true);
+    ImGui_ImplVulkan_InitInfo init_info = {};
+    init_info.Instance = m_vkInstance->get();
+    init_info.PhysicalDevice = m_physicalDevice->get();
+    init_info.Device = m_logicalDevice->get();
+    // init_info.QueueFamily = 
+    init_info.Queue = m_logicalDevice->getGraphicQueue();
+    //init_info.PipelineCache = g_PipelineCache;
+    //init_info.DescriptorPool = g_DescriptorPool;
+    //init_info.Allocator = g_Allocator;
+    //init_info.MinImageCount = g_MinImageCount;
+    //init_info.ImageCount = wd->ImageCount;
+    //init_info.CheckVkResultFn = check_vk_result;
+    // ImGui_ImplVulkan_Init(&init_info, );
+}
+
 void App::update() {
     try {
         while(!glfwWindowShouldClose(m_window)) {
             glfwPollEvents();
+            //ImGui_ImplVulkan_NewFrame();
+            //ImGui_ImplGlfw_NewFrame();
+            //ImGui::NewFrame();
             m_camera.update(m_inputs);
-            drawFrame();
+            //ImGui::Render();
+            drawFrame(ImGui::GetDrawData());
             resetInputs();
+            //ImGui::EndFrame();
         }
         m_logicalDevice->get().waitIdle();
     } catch (vk::SystemError e) {
@@ -90,7 +122,7 @@ void App::update() {
     }
 }
 
-void App::drawFrame() {
+void App::drawFrame(ImDrawData* draw_data) {
     uint32_t imageIndex;
     m_logicalDevice->get().acquireNextImageKHR(m_swapChain->get(), UINT64_MAX, m_semaphore->getImageAvailable(), nullptr, &imageIndex);
 

@@ -19,6 +19,15 @@ file(GLOB_RECURSE MY_SHADERS res/shaders/*.hlsl)
 
 find_package(Vulkan REQUIRED)
 add_subdirectory(lib/glfw)
+add_library(imgui STATIC 
+    lib/imgui/imgui.cpp 
+    lib/imgui/imgui_draw.cpp 
+    lib/imgui/imgui_demo.cpp 
+    lib/imgui/imgui_widgets.cpp
+    lib/imgui/examples/imgui_impl_glfw.cpp
+    lib/imgui/examples/imgui_impl_vulkan.cpp
+)
+target_link_libraries(imgui glfw)
 
 # /////////////////////////////////////////////////////////////////////////////
 # ///////////////////////////////// INCLUDES //////////////////////////////////
@@ -30,6 +39,8 @@ include_directories(
     lib/glm
     lib/tinygltf
     lib/json/include
+    lib/imgui
+    lib/imgui/examples
     src
     res
 )
@@ -45,6 +56,7 @@ add_executable(${PROJECT_NAME} ${MY_SOURCES})
 target_link_libraries(
     ${PROJECT_NAME}
     glfw
+    imgui
     ${GLFW_LIBRARIES}
     ${Vulkan_LIBRARIES}
 )
