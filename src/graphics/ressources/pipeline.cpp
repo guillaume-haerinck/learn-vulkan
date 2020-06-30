@@ -111,19 +111,22 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
             vk::SampleCountFlagBits::e1,
             vk::AttachmentLoadOp::eClear,
             vk::AttachmentStoreOp::eStore,
-            vk::AttachmentLoadOp::eDontCare,
-            vk::AttachmentStoreOp::eDontCare,
-            vk::ImageLayout::eUndefined,
-            vk::ImageLayout::eDepthStencilAttachmentOptimal
+            vk::AttachmentLoadOp::eDontCare, // Stencil load
+            vk::AttachmentStoreOp::eDontCare, // Stencil store
+            vk::ImageLayout::eUndefined, // Initial layout
+            vk::ImageLayout::eDepthStencilAttachmentOptimal // End layout
         );
-        vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthAttachmentOptimal);
+        vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthStencilAttachmentOptimal);
 
         // Handle subpass
         vk::SubpassDescription subpass(
             vk::SubpassDescriptionFlags(),
             vk::PipelineBindPoint::eGraphics,
-            1, &depthAttachmentRef,
-            1, &colorAttachmentRef
+            0, nullptr, // Input attachments
+            1, &colorAttachmentRef, // Color attachments
+            nullptr, // Resolve attachment
+            &depthAttachmentRef, // DepthStencil Attachment
+            0, nullptr // Preserve attachments
         );
 
         vk::SubpassDependency dependency(

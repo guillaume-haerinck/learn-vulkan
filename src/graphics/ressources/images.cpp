@@ -24,10 +24,14 @@ ImageView::ImageView(LogicalDevice& device, MemoryAllocator& memoryAllocator)
 		vk::ImageViewCreateFlags(),
 		m_image.get(),
 		vk::ImageViewType::e2D,
-		vk::Format::eR8G8B8A8Srgb,
+		vk::Format::eD32Sfloat,
 		vk::ComponentMapping(),
 		vk::ImageSubresourceRange(
-			vk::ImageAspectFlagBits::eDepth
+			vk::ImageAspectFlagBits::eDepth,
+			0, // baseMipLevel
+			1, // levelCount
+			0, // baseArrayLayer
+			1  // layerCount
 		)
 	);
 	m_imageView = device.get().createImageViewUnique(imageViewInfo);
