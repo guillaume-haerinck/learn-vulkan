@@ -21,10 +21,10 @@ App::App() {
 
     try {
         m_vkInstance = new Instance;
-        m_debugReport = new DebugReport(*m_vkInstance);
         m_surface = new Surface(*m_vkInstance, m_window);
         m_physicalDevice = new PhysicalDevice(*m_vkInstance, *m_surface);
         m_logicalDevice = new LogicalDevice(*m_physicalDevice);
+        m_debugReport = new DebugReport(*m_vkInstance, *m_logicalDevice);
         m_memoryAllocator = new MemoryAllocator(*m_physicalDevice, *m_logicalDevice);
         m_swapChain = new SwapChain(*m_physicalDevice, *m_logicalDevice, *m_surface);
         m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_memoryAllocator, model.vertices);
@@ -181,6 +181,13 @@ void App::drawFrame() {
 
     // TODO not that great to recreate command buffers each frame, only do it if there are changes
     CommandBuffer commandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer, *m_indexBuffer, ImGui::GetDrawData());
+    m_debugReport->startLabel(commandBuffer.get().at(imageIndex), "Draw ImGui and Teapot", glm::vec4(1, 1, 0, 1));
+    m_debugReport->setObjectName(
+        vk::ObjectType::eCommandBuffer, 
+        DebugReport::getVulkanHandle(commandBuffer.get().at(imageIndex)), 
+        "Main Command Buffer"
+    );
+
     vk::SubmitInfo submitInfo(
         1, waitSemaphores, waitStages,
         1, &commandBuffer.get()[imageIndex],
@@ -195,6 +202,7 @@ void App::drawFrame() {
         &imageIndex, nullptr
     );
     m_logicalDevice->getPresentQueue().presentKHR(presentInfo);
+    m_debugReport->endLabel(commandBuffer.get().at(imageIndex));
 
     m_logicalDevice->getPresentQueue().waitIdle();
 }

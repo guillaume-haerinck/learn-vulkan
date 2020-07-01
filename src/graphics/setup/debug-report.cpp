@@ -5,36 +5,26 @@
 #include <rang.hpp>
 #include <debug_break/debug_break.h>
 
-DebugReport::DebugReport(Instance& instance) : m_instance(instance) {
+DebugReport::DebugReport(Instance& instance, LogicalDevice& device) 
+    : m_instance(instance), m_device(device)
+{
 #ifndef NDEBUG
-    pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(instance.get().getProcAddr("vkCreateDebugUtilsMessengerEXT"));
-    if (!pfnVkCreateDebugUtilsMessengerEXT)
-        std::cerr << "GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function." << std::endl;
+    vk::DebugUtilsMessengerCreateInfoEXT info(
+        vk::DebugUtilsMessengerCreateFlagsEXT(),
+        vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning | vk::DebugUtilsMessageSeverityFlagBitsEXT::eError,
+        vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation,
+        &DebugReport::validationCallback
+    );
 
-    pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(instance.get().getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
-    if (!pfnVkDestroyDebugUtilsMessengerEXT)
-        std::cerr << "GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function." << std::endl;
-
-    // Use of the c API because Vulkan Hpp need dynamic function loading for extensions
-    VkDebugUtilsMessengerCreateInfoEXT info = {};
-    info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    info.pNext = nullptr;
-    info.flags = 0; // reserved for future use
-    info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
-    info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
-    info.pfnUserCallback = &DebugReport::validationCallback;
-    info.pUserData = nullptr;
-
-    if (pfnVkCreateDebugUtilsMessengerEXT(VkInstance(instance.get()), &info, nullptr, &m_validationCallback) != VK_SUCCESS) {
-        std::cerr << "[DebugReport] Cannot create debug report callback" << std::endl;
-        debug_break();
-    }
+    // https://github.com/KhronosGroup/Vulkan-Hpp#extensions--per-device-function-pointers
+    m_dldi = vk::DispatchLoaderDynamic(instance.get(), vkGetInstanceProcAddr);
+    m_validationCallback = instance.get().createDebugUtilsMessengerEXT(info, nullptr, m_dldi);
 #endif
 }
 
 DebugReport::~DebugReport() {
 #ifndef NDEBUG
-    pfnVkDestroyDebugUtilsMessengerEXT(VkInstance(m_instance.get()), m_validationCallback, nullptr);
+    m_instance.get().destroyDebugUtilsMessengerEXT(m_validationCallback, nullptr, m_dldi);
 #endif
 }
 
@@ -65,25 +55,25 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport::validationCallback(
     if (0 < pCallbackData->queueLabelCount) {
         std::cerr << rang::fg::gray << "Queue Labels:\n";
         for (uint8_t i = 0; i < pCallbackData->queueLabelCount; i++)
-            std::cerr << rang::fg::gray << "\t" << "labelName = " << rang::fg::reset << pCallbackData->pQueueLabels[i].pLabelName << "\n";
+            std::cerr << rang::fg::gray << "  labelName = " << rang::fg::reset << pCallbackData->pQueueLabels[i].pLabelName << "\n";
     }
 
     if (0 < pCallbackData->cmdBufLabelCount) {
         std::cerr << rang::fg::gray << "CommandBuffer Labels:\n";
         for (uint8_t i = 0; i < pCallbackData->cmdBufLabelCount; i++)
-            std::cerr << rang::fg::gray << "\t" << "labelName = " << rang::fg::reset << pCallbackData->pCmdBufLabels[i].pLabelName << "\n";
+            std::cerr << rang::fg::gray << "  labelName = " << rang::fg::reset << pCallbackData->pCmdBufLabels[i].pLabelName << "\n";
     }
 
     if (0 < pCallbackData->objectCount) {
         std::cerr << rang::fg::gray << "Objects:\n";
 
         for (unsigned int i = 0; i < pCallbackData->objectCount; i++) {
-            std::cerr << rang::fg::gray << " " << i << ": \n";
-            std::cerr << rang::fg::gray << "  " << "objectType   = " << rang::fg::reset << vk::to_string(static_cast<vk::ObjectType>(pCallbackData->pObjects[i].objectType)) << "\n";
-            std::cerr << rang::fg::gray << "  " << "objectHandle = " << rang::fg::reset << pCallbackData->pObjects[i].objectHandle << "\n";
+            std::cerr << rang::fg::gray << " " << i << ":\n";
+            std::cerr << rang::fg::gray << "  objectType   = " << rang::fg::reset << vk::to_string(static_cast<vk::ObjectType>(pCallbackData->pObjects[i].objectType)) << "\n";
+            std::cerr << rang::fg::gray << "  objectHandle = " << rang::fg::reset << pCallbackData->pObjects[i].objectHandle << "\n";
 
             if (pCallbackData->pObjects[i].pObjectName)
-                std::cerr << rang::fg::gray << "  " << "objectName   = " << rang::fg::reset << pCallbackData->pObjects[i].pObjectName << "\n";
+                std::cerr << rang::fg::gray << "  objectName   = " << rang::fg::reset << pCallbackData->pObjects[i].pObjectName << "\n";
         }
     }
 
@@ -127,4 +117,70 @@ std::string DebugReport::vkResultToString(VkResult err)
     default:
         return "UNKNOWN_ERROR";
     }
+}
+
+void DebugReport::setObjectName(vk::ObjectType type, uint64_t objectHandle, const char* name) {
+#ifndef NDEBUG
+    vk::DebugUtilsObjectNameInfoEXT info(
+        type, objectHandle, name
+    );
+    m_device.get().setDebugUtilsObjectNameEXT(info, m_dldi);
+#endif
+}
+
+void DebugReport::setTag(vk::ObjectType type, uint64_t objectHandle, uint64_t id, size_t tagSize, const void* pTag) {
+#ifndef NDEBUG
+    vk::DebugUtilsObjectTagInfoEXT info(
+        type, objectHandle, id, tagSize, pTag
+    );
+    m_device.get().setDebugUtilsObjectTagEXT(info, m_dldi);
+#endif
+}
+
+void DebugReport::startLabel(const vk::Queue& queue, const char* name, const glm::vec4& color) {
+#ifndef NDEBUG
+    vk::DebugUtilsLabelEXT info(
+        name, { color.r, color.g, color.b, color.a }
+    );
+    queue.beginDebugUtilsLabelEXT(info, m_dldi);
+#endif
+}
+
+void DebugReport::insertSubLabel(const vk::Queue& queue, const char* name, const glm::vec4& color) {
+#ifndef NDEBUG
+    vk::DebugUtilsLabelEXT info(
+        name, { color.r, color.g, color.b, color.a }
+    );
+    queue.insertDebugUtilsLabelEXT(info, m_dldi);
+#endif
+}
+
+void DebugReport::endLabel(const vk::Queue& queue) {
+#ifndef NDEBUG
+    queue.endDebugUtilsLabelEXT(m_dldi);
+#endif
+}
+
+void DebugReport::startLabel(const vk::CommandBuffer& command, const char* name, const glm::vec4& color) {
+#ifndef NDEBUG
+    vk::DebugUtilsLabelEXT info(
+        name, { color.r, color.g, color.b, color.a }
+    );
+    command.beginDebugUtilsLabelEXT(info, m_dldi);
+#endif
+}
+
+void DebugReport::insertSubLabel(const vk::CommandBuffer& command, const char* name, const glm::vec4& color) {
+#ifndef NDEBUG
+    vk::DebugUtilsLabelEXT info(
+        name, { color.r, color.g, color.b, color.a }
+    );
+    command.insertDebugUtilsLabelEXT(info, m_dldi);
+#endif
+}
+
+void DebugReport::endLabel(const vk::CommandBuffer& command) {
+#ifndef NDEBUG
+    command.endDebugUtilsLabelEXT(m_dldi);
+#endif
 }

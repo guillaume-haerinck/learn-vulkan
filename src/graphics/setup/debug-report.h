@@ -1,12 +1,39 @@
 #pragma once
 
 #include <vulkan/vulkan.hpp>
+#include <glm/glm.hpp>
+
 #include "instance.h"
+#include "devices.h"
+
+// TODO handle name, tag and label with macros to prevent footprint on non-debug builds
 
 class DebugReport {
 public:
-    DebugReport(Instance& instance);
+    DebugReport(Instance& instance, LogicalDevice& device);
     ~DebugReport();
+
+    void setObjectName(vk::ObjectType type, uint64_t objectHandle, const char* name);
+    void setTag(vk::ObjectType type, uint64_t objectHandle, uint64_t id, size_t tagSize, const void* pTag);
+
+    void startLabel(const vk::Queue& queue, const char* name, const glm::vec4& color);
+    void insertSubLabel(const vk::Queue& queue, const char* name, const glm::vec4& color);
+    void endLabel(const vk::Queue& queue);
+
+    void startLabel(const vk::CommandBuffer& command, const char* name, const glm::vec4& color);
+    void insertSubLabel(const vk::CommandBuffer& command, const char* name, const glm::vec4& color);
+    void endLabel(const vk::CommandBuffer& command);
+
+    // Helper functions
+
+    static std::string vkResultToString(VkResult err);
+
+    template<typename T>
+    static uint64_t getVulkanHandle(T const& cppHandle) {
+        return uint64_t(static_cast<T::CType>(cppHandle));
+    };
+
+    // Callbacks
 
     /*
      * @brief New extension to handle error
@@ -21,12 +48,10 @@ public:
 
     static void checkVkResult(VkResult err);
 
-    static std::string vkResultToString(VkResult err);
-
 private:
     Instance& m_instance;
+    LogicalDevice& m_device;
 
-    VkDebugUtilsMessengerEXT m_validationCallback;
-    PFN_vkCreateDebugUtilsMessengerEXT pfnVkCreateDebugUtilsMessengerEXT;
-    PFN_vkDestroyDebugUtilsMessengerEXT pfnVkDestroyDebugUtilsMessengerEXT;
+    vk::DispatchLoaderDynamic m_dldi;
+    vk::DebugUtilsMessengerEXT m_validationCallback;
 };

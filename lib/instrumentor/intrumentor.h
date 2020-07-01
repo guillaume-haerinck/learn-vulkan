@@ -11,7 +11,7 @@
 // Open Google chrome and go to chrome://tracing/
 // Then you just have to drag'drop the json file generated
 
-#define LV_PROFILE
+// #define LV_PROFILE
 
 #define CONCAT_(x,y) x##y
 #define CONCAT(x,y) CONCAT_(x,y)
