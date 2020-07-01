@@ -1,31 +1,31 @@
 #include "debug-report.h"
 
 #include <iostream>
-#include <spdlog/spdlog.h>
+#include <sstream>
+#include <rang.hpp>
 #include <debug_break/debug_break.h>
 
 DebugReport::DebugReport(Instance& instance) : m_instance(instance) {
 #ifndef NDEBUG
-    pfnVkCreateDebugReportCallbackEXT = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(instance.get().getProcAddr("vkCreateDebugReportCallbackEXT"));
-    if (!pfnVkCreateDebugReportCallbackEXT) {
-        std::cerr << "GetInstanceProcAddr: Unable to find vkCreateDebugReportCallbackEXT function." << std::endl;
-        debug_break();
-    }
+    pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(instance.get().getProcAddr("vkCreateDebugUtilsMessengerEXT"));
+    if (!pfnVkCreateDebugUtilsMessengerEXT)
+        std::cerr << "GetInstanceProcAddr: Unable to find pfnVkCreateDebugUtilsMessengerEXT function." << std::endl;
 
-    pfnVkDestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(instance.get().getProcAddr("vkDestroyDebugReportCallbackEXT"));
-    if (!pfnVkDestroyDebugReportCallbackEXT) {
-        std::cerr << "GetInstanceProcAddr: Unable to find vkDestroyDebugReportCallbackEXT function." << std::endl;
-        debug_break();
-    }
+    pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(instance.get().getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
+    if (!pfnVkDestroyDebugUtilsMessengerEXT)
+        std::cerr << "GetInstanceProcAddr: Unable to find pfnVkDestroyDebugUtilsMessengerEXT function." << std::endl;
 
-    VkDebugReportCallbackCreateInfoEXT callbackCreateInfo;
-    callbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
-    callbackCreateInfo.pNext = nullptr;
-    callbackCreateInfo.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
-    callbackCreateInfo.pfnCallback = &DebugReport::debugCallback;
-    callbackCreateInfo.pUserData = nullptr;
+    // Use of the c API because Vulkan Hpp need dynamic function loading for extensions
+    VkDebugUtilsMessengerCreateInfoEXT info = {};
+    info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    info.pNext = nullptr;
+    info.flags = 0; // reserved for future use
+    info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
+    info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+    info.pfnUserCallback = &DebugReport::validationCallback;
+    info.pUserData = nullptr;
 
-    if (pfnVkCreateDebugReportCallbackEXT(VkInstance(instance.get()), &callbackCreateInfo, nullptr, &m_debugCallback) != VK_SUCCESS) {
+    if (pfnVkCreateDebugUtilsMessengerEXT(VkInstance(instance.get()), &info, nullptr, &m_validationCallback) != VK_SUCCESS) {
         std::cerr << "[DebugReport] Cannot create debug report callback" << std::endl;
         debug_break();
     }
@@ -34,28 +34,65 @@ DebugReport::DebugReport(Instance& instance) : m_instance(instance) {
 
 DebugReport::~DebugReport() {
 #ifndef NDEBUG
-    pfnVkDestroyDebugReportCallbackEXT(VkInstance(m_instance.get()), m_debugCallback, nullptr);
+    pfnVkDestroyDebugUtilsMessengerEXT(VkInstance(m_instance.get()), m_validationCallback, nullptr);
 #endif
 }
 
-VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport::debugCallback(
-    VkDebugReportFlagsEXT       flags,
-    VkDebugReportObjectTypeEXT  objectType,
-    uint64_t                    object,
-    size_t                      location,
-    int32_t                     messageCode,
-    const char*                 pLayerPrefix,
-    const char*                 pMessage,
-    void*                       pUserData)
+VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport::validationCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT messageTypes,
+    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+    void* pUserData)
 {
-    spdlog::error("[Debug Report] {}", pMessage);
-    return false;
+    std::cerr << rang::style::bold;
+
+    switch (messageSeverity) {
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: std::cerr << rang::fg::red; break;
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: std::cerr << rang::fg::yellow; break;
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: std::cerr << rang::fg::green; break;
+    default: break;
+    }
+
+    std::cerr << "[" << vk::to_string(static_cast<vk::DebugUtilsMessageSeverityFlagBitsEXT>(messageSeverity)) << " ";
+    std::cerr << vk::to_string(static_cast<vk::DebugUtilsMessageTypeFlagsEXT>(messageTypes)) << "]\n";
+    std::cerr << rang::fg::reset << rang::style::reset;
+    std::cerr << pCallbackData->pMessage << "\n";
+    std::cerr << rang::fg::gray << "messageIDName   = " << rang::fg::reset;
+    std::cerr << pCallbackData->pMessageIdName << "\n";
+    std::cerr << rang::fg::gray << "messageIDNumber = " << rang::fg::reset;
+    std::cerr << pCallbackData->messageIdNumber << "\n";
+
+    if (0 < pCallbackData->queueLabelCount) {
+        std::cerr << rang::fg::gray << "Queue Labels:\n";
+        for (uint8_t i = 0; i < pCallbackData->queueLabelCount; i++)
+            std::cerr << rang::fg::gray << "\t" << "labelName = " << rang::fg::reset << pCallbackData->pQueueLabels[i].pLabelName << "\n";
+    }
+
+    if (0 < pCallbackData->cmdBufLabelCount) {
+        std::cerr << rang::fg::gray << "CommandBuffer Labels:\n";
+        for (uint8_t i = 0; i < pCallbackData->cmdBufLabelCount; i++)
+            std::cerr << rang::fg::gray << "\t" << "labelName = " << rang::fg::reset << pCallbackData->pCmdBufLabels[i].pLabelName << "\n";
+    }
+
+    if (0 < pCallbackData->objectCount) {
+        std::cerr << rang::fg::gray << "Objects:\n";
+
+        for (unsigned int i = 0; i < pCallbackData->objectCount; i++) {
+            std::cerr << rang::fg::gray << " " << i << ": \n";
+            std::cerr << rang::fg::gray << "  " << "objectType   = " << rang::fg::reset << vk::to_string(static_cast<vk::ObjectType>(pCallbackData->pObjects[i].objectType)) << "\n";
+            std::cerr << rang::fg::gray << "  " << "objectHandle = " << rang::fg::reset << pCallbackData->pObjects[i].objectHandle << "\n";
+
+            if (pCallbackData->pObjects[i].pObjectName)
+                std::cerr << rang::fg::gray << "  " << "objectName   = " << rang::fg::reset << pCallbackData->pObjects[i].pObjectName << "\n";
+        }
+    }
+
+    return VK_FALSE;
 }
 
-void DebugReport::checkVkResult(VkResult err)
-{
+void DebugReport::checkVkResult(VkResult err) {
     if (err != VK_SUCCESS)
-        spdlog::error("[ImGui] {}", vkResultToString(err));
+        std::cerr << rang::fg::red << "[ImGui] " << rang::fg::reset << vkResultToString(err) << std::endl;
 }
 
 std::string DebugReport::vkResultToString(VkResult err)
@@ -90,14 +127,4 @@ std::string DebugReport::vkResultToString(VkResult err)
     default:
         return "UNKNOWN_ERROR";
     }
-}
-
-static VKAPI_ATTR VkBool32 VKAPI_CALL validationCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-    void* pUserData)
-{
-    spdlog::error("[Validation Layer] {}", pCallbackData->pMessage);
-    return VK_FALSE;
 }

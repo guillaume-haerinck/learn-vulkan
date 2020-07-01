@@ -26,7 +26,7 @@ Instance::Instance() {
     findBestLayers(installedLayers, wantedLayers, validationLayers);
 
     std::vector<const char*> wantedExtensions = {
-        VK_EXT_DEBUG_REPORT_EXTENSION_NAME
+        VK_EXT_DEBUG_UTILS_EXTENSION_NAME
     };
     std::vector<vk::ExtensionProperties> installedExtensions = vk::enumerateInstanceExtensionProperties();
     findBestExtensions(installedExtensions, wantedExtensions, extensions);

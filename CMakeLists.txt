@@ -41,7 +41,7 @@ include_directories(
     lib/json/include
     lib/imgui
     lib/imgui/examples
-    lib/spdlog/include
+    lib/rang/include
     src
     res
 )

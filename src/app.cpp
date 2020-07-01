@@ -3,13 +3,11 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 #include <vulkan/vulkan.hpp>
-#include <spdlog/spdlog.h>
 #include <instrumentor/intrumentor.h>
 
 InputAction App::m_inputs;
 
 App::App() {
-    spdlog::set_pattern("[%l] %^ %v %$");
     PROFILE_BEGIN_SESSION("Learn Vulkan", "learn-vulkan-profiling.json");
     PROFILE_SCOPE("Init application");
 
