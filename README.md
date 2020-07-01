@@ -71,6 +71,7 @@ Simply run the executable, but beware that the working directory must be this fo
 | [Niagara](https://github.com/zeux/niagara)                   |        |             |
 | [Pumex](https://github.com/pumexx/pumex)                     |        |             |
 | [Diligent Engine](https://github.com/DiligentGraphics/DiligentEngine) |        |             |
+| [Cauldron](https://github.com/GPUOpen-LibrariesAndSDKs/Cauldron) | | |
 
 ### Synchronisation
 

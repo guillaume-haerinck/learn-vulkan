@@ -3,10 +3,16 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 #include <vulkan/vulkan.hpp>
+#include <spdlog/spdlog.h>
+#include <instrumentor/intrumentor.h>
 
 InputAction App::m_inputs;
 
 App::App() {
+    spdlog::set_pattern("[%l] %^ %v %$");
+    PROFILE_BEGIN_SESSION("Learn Vulkan", "learn-vulkan-profiling.json");
+    PROFILE_SCOPE("Init application");
+
     initWindow();
 
     glfwSetMouseButtonCallback(m_window, processMouseInputs);
@@ -63,9 +69,11 @@ App::~App() {
     delete m_vkInstance;
     glfwDestroyWindow(m_window);
     glfwTerminate();
+    PROFILE_END_SESSION();
 }
 
 void App::initWindow() {
+    PROFILE_SCOPE("Init window");
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -74,6 +82,7 @@ void App::initWindow() {
 
 void App::initImgui()
 {
+    PROFILE_SCOPE("Init imgui");
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -127,6 +136,8 @@ void App::initImgui()
 void App::update() {
     try {
         while(!glfwWindowShouldClose(m_window)) {
+            PROFILE_SCOPE("App Main loop");
+
             glfwPollEvents();
             if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
                 m_camera.update(m_inputs);
@@ -160,6 +171,7 @@ void App::update() {
 }
 
 void App::drawFrame() {
+    PROFILE_SCOPE("App draw frame");
     uint32_t imageIndex;
     m_logicalDevice->get().acquireNextImageKHR(m_swapChain->get(), UINT64_MAX, m_semaphore->getImageAvailable(), nullptr, &imageIndex);
 

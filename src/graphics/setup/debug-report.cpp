@@ -1,6 +1,7 @@
 #include "debug-report.h"
 
 #include <iostream>
+#include <spdlog/spdlog.h>
 #include <debug_break/debug_break.h>
 
 DebugReport::DebugReport(Instance& instance) : m_instance(instance) {
@@ -47,14 +48,14 @@ VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport::debugCallback(
     const char*                 pMessage,
     void*                       pUserData)
 {
-    std::cerr << "[Debug Report] " << pMessage << std::endl;
+    spdlog::error("[Debug Report] {}", pMessage);
     return false;
 }
 
 void DebugReport::checkVkResult(VkResult err)
 {
     if (err != VK_SUCCESS)
-        std::cerr << "[ImGui] " << vkResultToString(err) << std::endl;
+        spdlog::error("[ImGui] {}", vkResultToString(err));
 }
 
 std::string DebugReport::vkResultToString(VkResult err)
@@ -97,6 +98,6 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL validationCallback(
     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
     void* pUserData)
 {
-    std::cerr << "[Validation Layer] " << pCallbackData->pMessage << std::endl;
+    spdlog::error("[Validation Layer] {}", pCallbackData->pMessage);
     return VK_FALSE;
 }

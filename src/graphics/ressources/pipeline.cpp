@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <debug_break/debug_break.h>
+#include <spdlog/spdlog.h>
 
 Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& descriptorPool, MemoryAllocator& memoryAllocator)
     : m_device(device), m_pipelineLayout(device), m_uniformBuffer(device, memoryAllocator, swapChain.getImageViews().size()),
@@ -229,7 +230,7 @@ std::vector<char> Pipeline::readBinaryFile(const std::string& filename) {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
-        std::cerr << "[Pipeline] Failed to open SPIR-V file : " << filename << std::endl;
+        spdlog::error("[Pipeline] Failed to open SPIR-V file : {}", filename);
         debug_break();
     }
 
