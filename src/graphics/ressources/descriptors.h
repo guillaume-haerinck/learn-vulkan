@@ -79,7 +79,7 @@ public:
 	PipelineLayout(LogicalDevice& device);
 	~PipelineLayout();
 
-    vk::PipelineLayout& getLayout() { return m_pipelineLayout; }
+    vk::PipelineLayout& get() { return m_pipelineLayout; }
     DescriptorSetLayout& getDescriptorSetLayout() { return m_descriptorSetLayout; }
 
 private:

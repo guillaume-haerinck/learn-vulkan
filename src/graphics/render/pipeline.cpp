@@ -7,7 +7,7 @@
 Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& descriptorPool, MemoryAllocator& memoryAllocator)
     : m_device(device), m_pipelineLayout(device), m_uniformBuffer(device, memoryAllocator, swapChain.getImageViews().size()),
       m_descriptorSets(device, descriptorPool, m_pipelineLayout.getDescriptorSetLayout(), swapChain.getImageViews().size(), m_uniformBuffer),
-      m_depthBuffer(device, memoryAllocator)
+      m_framebuffer(device, swapChain, memoryAllocator)
 {
     // Shader stages
     vk::PipelineShaderStageCreateInfo shaderStages[2];
@@ -87,69 +87,6 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
         &attachement,
         { 0.0f, 0.0f, 0.0f, 0.0f } // BlendConstants
     );
-    
-    // Render pass, TODO move to a separate class
-    {
-        // Color buffer
-        vk::AttachmentDescription colorAttachment(
-            vk::AttachmentDescriptionFlags(),
-            swapChain.getImageFormat(),
-            vk::SampleCountFlagBits::e1,
-            vk::AttachmentLoadOp::eClear,
-            vk::AttachmentStoreOp::eStore,
-            vk::AttachmentLoadOp::eDontCare,
-            vk::AttachmentStoreOp::eDontCare,
-            vk::ImageLayout::eUndefined,
-            vk::ImageLayout::ePresentSrcKHR
-        );
-        vk::AttachmentReference colorAttachmentRef(0, vk::ImageLayout::eColorAttachmentOptimal);
-
-        // Depth buffer
-        vk::AttachmentDescription depthAttachment(
-            vk::AttachmentDescriptionFlags(),
-            vk::Format::eD32Sfloat,
-            vk::SampleCountFlagBits::e1,
-            vk::AttachmentLoadOp::eClear,
-            vk::AttachmentStoreOp::eStore,
-            vk::AttachmentLoadOp::eDontCare, // Stencil load
-            vk::AttachmentStoreOp::eDontCare, // Stencil store
-            vk::ImageLayout::eUndefined, // Initial layout
-            vk::ImageLayout::eDepthStencilAttachmentOptimal // End layout
-        );
-        vk::AttachmentReference depthAttachmentRef(1, vk::ImageLayout::eDepthStencilAttachmentOptimal);
-
-        // Handle subpass
-        vk::SubpassDescription subpass(
-            vk::SubpassDescriptionFlags(),
-            vk::PipelineBindPoint::eGraphics,
-            0, nullptr, // Input attachments
-            1, &colorAttachmentRef, // Color attachments
-            nullptr, // Resolve attachment
-            &depthAttachmentRef, // DepthStencil Attachment
-            0, nullptr // Preserve attachments
-        );
-
-        vk::SubpassDependency dependency(
-            VK_SUBPASS_EXTERNAL, // srcSubpass
-            0, // dstSubpass
-            vk::PipelineStageFlagBits::eColorAttachmentOutput, // srcStage
-            vk::PipelineStageFlagBits::eColorAttachmentOutput, // dstStage
-            vk::AccessFlagBits::eColorAttachmentRead, // srcAccess
-            vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite // dstAccess
-        );
-
-        // Create render pass
-        std::array<vk::AttachmentDescription, 2> attachments = { 
-            colorAttachment, depthAttachment 
-        };
-        vk::RenderPassCreateInfo renderPassInfo(
-            vk::RenderPassCreateFlags(),
-            2, attachments.data(),
-            1, &subpass,
-            1, &dependency
-        );
-        m_renderPass = m_device.get().createRenderPass(renderPassInfo);
-    }
 
     // Z-Test
     vk::PipelineDepthStencilStateCreateInfo depthStencil(
@@ -178,34 +115,13 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
         &depthStencil,
         &colorBlending,
         nullptr, // pDynamicState
-        m_pipelineLayout.getLayout(),
-        m_renderPass,
+        m_pipelineLayout.get(),
+        m_framebuffer.getRenderPass(),
         0, // subpass
         nullptr, // basePipelineHandle
         -1 // basePipelineIndex
     );
     m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo).value;
-
-    // Framebuffers TODO move to a separate class
-    {
-        m_swapChainFramebuffers.resize(swapChain.getImageViews().size());
-        for (size_t i = 0; i < swapChain.getImageViews().size(); i++) {
-            vk::ImageView attachments[] = {
-                swapChain.getImageViews()[i],
-                m_depthBuffer.getImageView()
-            };
-
-            vk::FramebufferCreateInfo framebufferInfo(
-                vk::FramebufferCreateFlags(),
-                m_renderPass,
-                2, attachments,
-                swapChain.getExtent().width,
-                swapChain.getExtent().height,
-                1 // layers
-            );
-            m_swapChainFramebuffers[i] = m_device.get().createFramebuffer(framebufferInfo);
-        }
-    }
     
     // Cleanup
     m_device.get().destroyShaderModule(shaderStages[0].module);
@@ -213,11 +129,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
 }
 
 Pipeline::~Pipeline() {
-    for (auto framebuffer : m_swapChainFramebuffers) {
-        m_device.get().destroyFramebuffer(framebuffer);
-    }
     m_device.get().destroyPipeline(m_graphicsPipeline);
-    m_device.get().destroyRenderPass(m_renderPass);
 }
 
 void Pipeline::updateUniformBuffer(unsigned int imageIndex, const glm::mat4x4& viewProj)

@@ -19,6 +19,8 @@
 #include "controls/input-action.h"
 #include "loaders/gltf-loader.h"
 
+// TODO create and visualize gameobjects into a tree, a scene view
+
 class App {
 public:
     App();

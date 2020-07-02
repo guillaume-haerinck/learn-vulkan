@@ -95,12 +95,15 @@ Simply run the executable, but beware that the working directory must be this fo
 | [Arm Understanding render passes](https://developer.arm.com/solutions/graphics-and-gaming/developer-guides/learn-the-basics/understanding-render-passes/single-view) | ARM                                 |                                                              |
 | [Vulkan Subpasses - Vulkan dev days 2016](https://www.khronos.org/assets/uploads/developers/library/2016-vulkan-devday-uk/6-Vulkan-subpasses.pdf) | Andrew Garrard                      | How the subpasses are used inside a render pass              |
 | [Vulkan multipass mobile defered done right - GDC 2017](https://www.khronos.org/assets/uploads/developers/library/2017-gdc/GDC_Vulkan-on-Mobile_Vulkan-Multipass-ARM_Mar17.pdf) | Hans-Kristian Arntzen               | Use of subpasses to do defered rendering with only one render pass instead of two |
+| [Deferring shading with multipass](https://arm-software.github.io/vulkan-sdk/multipass.html) | ARM                                 | Tutorial on deferred rendering with only one render pass     |
 
 ### Performance
 
-| Link                                                        | Author         | Description                                      |
-| ----------------------------------------------------------- | -------------- | ------------------------------------------------ |
-| [GPU Open on performance](https://gpuopen.com/performance/) | GPU Open (AMD) | Common optimisation techniques for Vulkan / DX12 |
+| Link                                                         | Author               | Description                                                |
+| ------------------------------------------------------------ | -------------------- | ---------------------------------------------------------- |
+| [GPU Open on performance](https://gpuopen.com/performance/)  | GPU Open (AMD)       | Common optimisation techniques for Vulkan / DX12           |
+| [Live long and optimize - Vulkanised 2019](https://www.khronos.org/assets/uploads/developers/library/2019-vulkanised/02_Live%20Long%20And%20Optimise-May19.pdf) | Michael Parkin-White | [Presentation](https://www.youtube.com/watch?v=ch6161wvME) |
+| [Frame Ressources](https://software.intel.com/content/www/us/en/develop/articles/practical-approach-to-vulkan-part-1.html) | Pawel Lapinski       |                                                            |
 
 ### Misc
 
