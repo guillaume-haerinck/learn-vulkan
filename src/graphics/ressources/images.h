@@ -5,24 +5,44 @@
 #include "graphics/setup/devices.h"
 #include "graphics/ressources/memory-allocator.h"
 
-// TODO abstract for more usages, check how it is done in other engines (can quickly grow the constructor)
-// get format and usage, find what remains
-// rename to framebuffer attachment ?
-
+/**
+ * @brief Abstract class for images
+ */
 class ImageView {
 public:
-	ImageView(LogicalDevice& device, MemoryAllocator& memoryAllocator);
-	~ImageView();
+	ImageView() {}
+	virtual ~ImageView() {}
 
-	vk::Image& get() { return m_image.get(); }
-	vk::ImageView& getImageView() { return m_imageView.get(); }
-
-private:
+	vk::Image& getImage() { return m_image.get(); }
+	vk::ImageView& get() { return m_imageView.get(); }
+	
+protected:
 	vk::UniqueImage m_image;
 	vk::UniqueImageView m_imageView;
 	vk::UniqueDeviceMemory m_memory;
 };
 
+/**
+ * @brief Depth buffer
+ */
+class DepthImageView : public ImageView {
+public:
+	DepthImageView(LogicalDevice& device, MemoryAllocator& memoryAllocator);
+	~DepthImageView();
+};
+
+/**
+ * @brief Texture color image from file
+ */
+class TextureImageView : public ImageView {
+public:
+	TextureImageView(LogicalDevice& device, MemoryAllocator& memoryAllocator, const char* filePath);
+	~TextureImageView();
+};
+
+/**
+ * @brief Texture sampler
+ */
 class Sampler {
 public:
 	Sampler();
@@ -31,4 +51,3 @@ public:
 private:
 
 };
-

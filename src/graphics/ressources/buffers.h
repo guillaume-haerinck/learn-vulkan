@@ -6,22 +6,7 @@
 
 #include "graphics/setup/devices.h"
 #include "graphics/ressources/memory-allocator.h"
-
-struct Model; // forward declaration
-
-/**
- * @brief Structure of data for each vertices in the engine
- */
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec2 uv;
-
-    Vertex() {}
-    Vertex(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& uv) 
-        : position(position), normal(normal), uv(uv) 
-    {}
-};
+#include "loaders/model.h"
 
 // TODO use a staging buffer
 // TODO use the same buffer for both vertex, index and uniform (use offset to do so)

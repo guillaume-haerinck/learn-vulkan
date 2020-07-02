@@ -56,5 +56,7 @@ private:
     ArcballCamera m_camera;
     GLTFLoader m_loader;
     static InputAction m_inputs;
+
+    TextureImageView* m_texture; // temp, might move with vertex and index buffer to an entity class
 };
 

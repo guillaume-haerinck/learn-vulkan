@@ -29,6 +29,8 @@ private:
 /////////////////// COMMAND BUFFER ///////////////////
 //////////////////////////////////////////////////////
 
+// TODO command buffers might not have to be a separate class, might need a renderer class which create commands based on an array of objects etc.
+
 class CommandBuffer {
 public:
     CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data);

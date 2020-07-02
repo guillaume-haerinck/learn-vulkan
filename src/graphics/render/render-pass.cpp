@@ -76,7 +76,7 @@ FrameBuffer::FrameBuffer(LogicalDevice& device, SwapChain& swapChain, MemoryAllo
     for (size_t i = 0; i < swapChain.getImageViews().size(); i++) {
         vk::ImageView attachments[] = {
             swapChain.getImageViews()[i],
-            m_depth.getImageView()
+            m_depth.get()
         };
 
         vk::FramebufferCreateInfo framebufferInfo(

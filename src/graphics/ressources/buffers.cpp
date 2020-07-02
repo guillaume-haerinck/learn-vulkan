@@ -4,13 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "graphics/setup/devices.h"
-#include "loaders/gltf-loader.h" // temp
 
 VertexBuffer::VertexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator, const std::vector<Vertex>& vertices)
     : m_vertices(vertices), IBuffer(device, memoryAllocator)
 {
-    
-
     vk::BufferCreateInfo info(
         vk::BufferCreateFlags(),
         sizeof(m_vertices.at(0)) * m_vertices.size(),

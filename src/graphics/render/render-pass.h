@@ -32,5 +32,5 @@ private:
 	std::vector<vk::Framebuffer> m_swapChainFramebuffers; // One for each swapchain image, they share the same attachments and depth
 	RenderPass m_renderPass;
 	std::vector<ImageView> m_attachments;
-	ImageView m_depth;
+	DepthImageView m_depth;
 };

@@ -30,6 +30,7 @@ App::App() {
         m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_memoryAllocator, model.vertices);
         m_indexBuffer = new IndexBuffer(*m_logicalDevice, *m_memoryAllocator, model);
         m_descriptorPool = new DescriptorPool(*m_logicalDevice);
+        m_texture = new TextureImageView(*m_logicalDevice, *m_memoryAllocator, "res/temp.jpg");
         m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain, *m_descriptorPool, *m_memoryAllocator);
         m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
         m_semaphore = new Semaphore(*m_logicalDevice);
@@ -59,6 +60,7 @@ App::~App() {
     delete m_swapChain;
     delete m_vertexBuffer;
     delete m_indexBuffer;
+    delete m_texture;
     delete m_memoryAllocator;
     delete m_logicalDevice;
     delete m_physicalDevice;

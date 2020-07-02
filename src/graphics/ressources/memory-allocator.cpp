@@ -13,11 +13,7 @@ MemoryAllocator::~MemoryAllocator()
 {
 }
 
-vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindBuffer(IBuffer& buffer, unsigned int index, bool copyData)
-{
-	// TODO allocate big chunk and split it for the buffer instead
-	// Memory handling (may use the AMD openGPU lib to handle this in the future)
-	// https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindBuffer(IBuffer& buffer, unsigned int index, bool copyData) {
 	vk::MemoryRequirements memoryRequirements = m_device.get().getBufferMemoryRequirements(buffer.getBuffer(index));
 
 	unsigned int memoryTypeIndex = PhysicalDevice::findMemoryType(
@@ -30,8 +26,7 @@ vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindBuffer(IBuffer& buffer, u
 		vk::MemoryAllocateInfo(memoryRequirements.size, memoryTypeIndex)
 	);
 
-	if (copyData)
-	{
+	if (copyData) {
 		unsigned int* pData = static_cast<unsigned int*>(m_device.get().mapMemory(deviceMemory.get(), 0, memoryRequirements.size));
 		memcpy(pData, buffer.getData(), buffer.getByteSize());
 		m_device.get().unmapMemory(deviceMemory.get());
@@ -43,18 +38,38 @@ vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindBuffer(IBuffer& buffer, u
 
 vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindImage(ImageView& image)
 {
-	vk::MemoryRequirements memoryRequirements = m_device.get().getImageMemoryRequirements(image.get());
+	vk::MemoryRequirements memoryRequirements = m_device.get().getImageMemoryRequirements(image.getImage());
 
 	unsigned int memoryTypeIndex = PhysicalDevice::findMemoryType(
 		m_physicalDevice.get().getMemoryProperties(),
 		memoryRequirements.memoryTypeBits,
 		vk::MemoryPropertyFlagBits::eDeviceLocal
-	); // FIMXE flags might be wrong, not using a staging buffer
+	);
 
 	vk::UniqueDeviceMemory deviceMemory = m_device.get().allocateMemoryUnique(
 		vk::MemoryAllocateInfo(memoryRequirements.size, memoryTypeIndex)
 	);
-	m_device.get().bindImageMemory(image.get(), deviceMemory.get(), 0);
+
+	m_device.get().bindImageMemory(image.getImage(), deviceMemory.get(), 0);
+	return std::move(deviceMemory); // transfert unique ptr ownership
+}
+
+vk::UniqueDeviceMemory MemoryAllocator::allocateStagingBuffer(vk::Buffer& buffer, unsigned int byteWidth, unsigned char* data) {
+	vk::MemoryRequirements memoryRequirements = m_device.get().getBufferMemoryRequirements(buffer);
+
+	unsigned int memoryTypeIndex = PhysicalDevice::findMemoryType(
+		m_physicalDevice.get().getMemoryProperties(),
+		memoryRequirements.memoryTypeBits,
+		vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent
+	);
+
+	vk::UniqueDeviceMemory deviceMemory = m_device.get().allocateMemoryUnique(
+		vk::MemoryAllocateInfo(memoryRequirements.size, memoryTypeIndex)
+	);
+
+	unsigned int* pData = static_cast<unsigned int*>(m_device.get().mapMemory(deviceMemory.get(), 0, memoryRequirements.size));
+	memcpy(pData, data, byteWidth);
+	m_device.get().unmapMemory(deviceMemory.get());
 
 	return std::move(deviceMemory); // transfert unique ptr ownership
 }
