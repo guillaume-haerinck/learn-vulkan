@@ -4,7 +4,7 @@
 #include <vulkan/vulkan.hpp>
 
 #include "instance.h"
-#include "graphics/output/surface.h"
+#include "surface.h"
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;

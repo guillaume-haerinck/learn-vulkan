@@ -5,7 +5,7 @@
 #include <string>
 #include <debug_break/debug_break.h>
 
-#include "graphics/output/swap-chain.h"
+#include "graphics/render/swap-chain.h"
 
 //////////////////////////////////////////////////////
 ////////////////// PHYSICAL DEVICE ///////////////////

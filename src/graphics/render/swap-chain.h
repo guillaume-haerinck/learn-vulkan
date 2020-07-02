@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "graphics/setup/devices.h"
-#include "surface.h"
+#include "graphics/setup/surface.h"
 
 struct SwapChainSupportDetails {
     vk::SurfaceCapabilitiesKHR capabilities;

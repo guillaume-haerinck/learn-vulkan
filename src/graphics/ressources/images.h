@@ -5,6 +5,10 @@
 #include "graphics/setup/devices.h"
 #include "graphics/ressources/memory-allocator.h"
 
+// TODO abstract for more usages, check how it is done in other engines (can quickly grow the constructor)
+// get format and usage, find what remains
+// rename to framebuffer attachment ?
+
 class ImageView {
 public:
 	ImageView(LogicalDevice& device, MemoryAllocator& memoryAllocator);

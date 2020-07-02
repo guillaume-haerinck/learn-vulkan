@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "swap-chain.h"
 #include "graphics/setup/devices.h"
-#include "graphics/output/swap-chain.h"
 #include "graphics/ressources/buffers.h"
 #include "graphics/ressources/descriptors.h"
 #include "graphics/ressources/images.h"

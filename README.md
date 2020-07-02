@@ -56,6 +56,7 @@ Simply run the executable, but beware that the working directory must be this fo
 | [Lets learn vulkan](https://gpuopen.com/learn/lets-learn-vulkan/) | GPU Open (AMD)             | Many articles on Vulkan                                      |
 | [NVidia dev blog](https://developer.nvidia.com/Vulkan)       | NVidia                     | Many articles on Vulkan                                      |
 | [Moving to vulkan](https://www.khronos.org/assets/uploads/developers/library/2016-uk-chapter-moving-to-vulkan/Moving-to-Vulkan_Khronos-UK_May16.pdf) | Khronos                    | Excellent presentation on the how and the why of Vulkan when it came out |
+| [Vulkan presentation library](https://www.khronos.org/developers/library/) | Khronos                    | Slides and videos of every Vulkan Dev Days                   |
 
 ### Libraries
 
@@ -84,18 +85,29 @@ Simply run the executable, but beware that the working directory must be this fo
 | [Barriers in vulkan are not difficult](http://cpp-rendering.io/barriers-vulkan-not-difficult/) | Antoine Morrier                  |             |
 | [Vulkan spec on synchronisation](https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#synchronization) | Khronos                          |             |
 
+### Render Pass
+
+| Link                                                         | Author                              | Description                                                  |
+| ------------------------------------------------------------ | ----------------------------------- | ------------------------------------------------------------ |
+| [Vulkan render passes](https://gpuopen.com/learn/vulkan-renderpasses/) | Graham Sellers                      | Why it was added to the specification and what are their usage |
+| [Render Passes in Vulkan - Vulkan dev days 2018](https://www.youtube.com/watch?v=x2SGVjlVGhE) | Bill Licea-Kane                     | Full featured presentation of their usage                    |
+| [Granite Vulkan backend part 5](http://themaister.net/blog/2019/04/27/a-tour-of-granites-vulkan-backend-part-5/) | Hans-Kristian Arntzen (The Maister) | Abstraction exemple of render passes                         |
+| [Arm Understanding render passes](https://developer.arm.com/solutions/graphics-and-gaming/developer-guides/learn-the-basics/understanding-render-passes/single-view) | ARM                                 |                                                              |
+| [Vulkan Subpasses - Vulkan dev days 2016](https://www.khronos.org/assets/uploads/developers/library/2016-vulkan-devday-uk/6-Vulkan-subpasses.pdf) | Andrew Garrard                      | How the subpasses are used inside a render pass              |
+| [Vulkan multipass mobile defered done right - GDC 2017](https://www.khronos.org/assets/uploads/developers/library/2017-gdc/GDC_Vulkan-on-Mobile_Vulkan-Multipass-ARM_Mar17.pdf) | Hans-Kristian Arntzen               | Use of subpasses to do defered rendering with only one render pass instead of two |
+
 ### Performance
 
-| Link                                                        | Author         | Description |
-| ----------------------------------------------------------- | -------------- | ----------- |
-| [GPU Open on performance](https://gpuopen.com/performance/) | GPU Open (AMD) |             |
+| Link                                                        | Author         | Description                                      |
+| ----------------------------------------------------------- | -------------- | ------------------------------------------------ |
+| [GPU Open on performance](https://gpuopen.com/performance/) | GPU Open (AMD) | Common optimisation techniques for Vulkan / DX12 |
 
 ### Misc
 
-| Link                                                         | Author                                          | Description |
-| ------------------------------------------------------------ | ----------------------------------------------- | ----------- |
-| [Awesome Vulkan](https://github.com/vinjn/awesome-vulkan)    |                                                 |             |
-| [A trip through the graphic pipeline](https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/) | [Fabian Giesen](https://fgiesen.wordpress.com/) |             |
+| Link                                                         | Author                                          | Description                                         |
+| ------------------------------------------------------------ | ----------------------------------------------- | --------------------------------------------------- |
+| [Awesome Vulkan](https://github.com/vinjn/awesome-vulkan)    | -                                               | List of useful Vulkan ressources                    |
+| [A trip through the graphic pipeline](https://fgiesen.wordpress.com/2011/07/09/a-trip-through-the-graphics-pipeline-2011-index/) | [Fabian Giesen](https://fgiesen.wordpress.com/) | An explanation on how graphic cards works internaly |
 
 
 

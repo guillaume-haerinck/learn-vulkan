@@ -186,7 +186,7 @@ Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& 
     );
     m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo).value;
 
-    // Framebuffers
+    // Framebuffers TODO move to a separate class
     {
         m_swapChainFramebuffers.resize(swapChain.getImageViews().size());
         for (size_t i = 0; i < swapChain.getImageViews().size(); i++) {
