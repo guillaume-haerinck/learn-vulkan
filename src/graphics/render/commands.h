@@ -30,15 +30,17 @@ private:
 //////////////////////////////////////////////////////
 
 // TODO command buffers might not have to be a separate class, might need a renderer class which create commands based on an array of objects etc.
+// TODO put static utility function ?
 
-class CommandBuffer {
+class CommandBufferFactory {
 public:
-    CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data);
-    ~CommandBuffer();
+    CommandBufferFactory(LogicalDevice& device, CommandPool& commandPool);
+    ~CommandBufferFactory();
 
-    std::vector<vk::CommandBuffer>& get() { return m_commandBuffers; }
+
+    std::vector<vk::CommandBuffer> mainLoop(Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data);
 
 private:
-    std::vector<vk::CommandBuffer> m_commandBuffers;
+    LogicalDevice& m_device; 
+    CommandPool& m_commandPool;
 };
-

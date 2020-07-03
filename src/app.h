@@ -49,6 +49,7 @@ private:
     DescriptorPool* m_descriptorPool;
     Pipeline* m_pipeline;
     CommandPool* m_commandPool;
+    CommandBufferFactory* m_commandBufferFactory;
     Semaphore* m_semaphore;
     VertexBuffer* m_vertexBuffer;
     IndexBuffer* m_indexBuffer;

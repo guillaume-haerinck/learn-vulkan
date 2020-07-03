@@ -23,22 +23,32 @@ CommandPool::~CommandPool() {
 /////////////////// COMMAND BUFFER ///////////////////
 //////////////////////////////////////////////////////
 
-CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data) {
-    m_commandBuffers.resize(pipeline.getFrameBuffers().size());
+CommandBufferFactory::CommandBufferFactory(LogicalDevice& device, CommandPool& commandPool)
+    : m_device(device), m_commandPool(commandPool)
+{}
+
+CommandBufferFactory::~CommandBufferFactory() {
+
+}
+
+std::vector<vk::CommandBuffer> CommandBufferFactory::mainLoop(Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data)
+{
+    std::vector<vk::CommandBuffer> commandBuffers;
+    commandBuffers.resize(pipeline.getFrameBuffers().size());
 
     vk::CommandBufferAllocateInfo allocInfo(
-        commandPool.get(), vk::CommandBufferLevel::ePrimary, (uint32_t) m_commandBuffers.size()
+        m_commandPool.get(), vk::CommandBufferLevel::ePrimary, (uint32_t)commandBuffers.size()
     );
-    m_commandBuffers = device.get().allocateCommandBuffers(allocInfo);
+    commandBuffers = m_device.get().allocateCommandBuffers(allocInfo);
 
-    for (size_t i = 0; i < m_commandBuffers.size(); i++) {
+    for (size_t i = 0; i < commandBuffers.size(); i++) {
         vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eRenderPassContinue, nullptr);
-        m_commandBuffers[i].begin(beginInfo);
+        commandBuffers[i].begin(beginInfo);
 
         vk::ClearValue clearValues[2];
         vk::ClearColorValue clearColor(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
         clearValues[0].color = clearColor;
-        clearValues[1].depthStencil = {1, 0};
+        clearValues[1].depthStencil = { 1, 0 };
         vk::RenderPassBeginInfo renderPassInfo(
             pipeline.getRenderPass(),
             pipeline.getFrameBuffers()[i],
@@ -46,19 +56,17 @@ CommandBuffer::CommandBuffer(LogicalDevice& device, CommandPool& commandPool, Pi
             2, clearValues
         );
 
-        m_commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
-        m_commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.get());
-        m_commandBuffers[i].bindVertexBuffers(0, vertexBuffer.getBuffer(), { 0 });
-        m_commandBuffers[i].bindIndexBuffer(indexBuffer.getBuffer(), 0, vk::IndexType::eUint32);
-        m_commandBuffers[i].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline.getLayout(), 0, 1, &pipeline.getDescriptorSet(i), 0, nullptr);
-        m_commandBuffers[i].drawIndexed(indexBuffer.getDataElementCount(), 1, 0, 0, 0);
-        ImGui_ImplVulkan_RenderDrawData(draw_data, m_commandBuffers[i]);
-        m_commandBuffers[i].endRenderPass();
-        m_commandBuffers[i].end();
+        commandBuffers[i].beginRenderPass(renderPassInfo, vk::SubpassContents::eInline);
+        commandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline.get());
+        commandBuffers[i].bindVertexBuffers(0, vertexBuffer.getBuffer(), { 0 });
+        commandBuffers[i].bindIndexBuffer(indexBuffer.getBuffer(), 0, vk::IndexType::eUint32);
+        commandBuffers[i].bindDescriptorSets(vk::PipelineBindPoint::eGraphics, pipeline.getLayout(), 0, 1, &pipeline.getDescriptorSet(i), 0, nullptr);
+        commandBuffers[i].drawIndexed(indexBuffer.getDataElementCount(), 1, 0, 0, 0);
+        ImGui_ImplVulkan_RenderDrawData(draw_data, commandBuffers[i]);
+        commandBuffers[i].endRenderPass();
+        commandBuffers[i].end();
     }
-}
 
-CommandBuffer::~CommandBuffer() {
-
+    return commandBuffers;
 }
 

@@ -17,6 +17,7 @@ class TextureImageView;
 // TODO better understanding of staging buffers
 
 // TODO check design, split only the allocation part might hurt code lisibility. Stuff like "createBuffer" with a few arguments might be a better approach
+// TODO use singleton ? (how to handle multithread ?)
 
 class MemoryAllocator {
 public:

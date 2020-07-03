@@ -30,9 +30,10 @@ App::App() {
         m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_memoryAllocator, model.vertices);
         m_indexBuffer = new IndexBuffer(*m_logicalDevice, *m_memoryAllocator, model);
         m_descriptorPool = new DescriptorPool(*m_logicalDevice);
-        m_texture = new TextureImageView(*m_logicalDevice, *m_memoryAllocator, "res/temp.jpg");
         m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain, *m_descriptorPool, *m_memoryAllocator);
         m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
+        m_commandBufferFactory = new CommandBufferFactory(*m_logicalDevice, *m_commandPool);
+        m_texture = new TextureImageView(*m_logicalDevice, *m_memoryAllocator, *m_commandBufferFactory, "res/temp.jpg");
         m_semaphore = new Semaphore(*m_logicalDevice);
 
     } catch (vk::SystemError e) {
@@ -61,6 +62,7 @@ App::~App() {
     delete m_vertexBuffer;
     delete m_indexBuffer;
     delete m_texture;
+    delete m_commandBufferFactory;
     delete m_memoryAllocator;
     delete m_logicalDevice;
     delete m_physicalDevice;
@@ -182,17 +184,17 @@ void App::drawFrame() {
     m_pipeline->updateUniformBuffer(imageIndex, m_camera.getViewProj());
 
     // TODO not that great to recreate command buffers each frame, only do it if there are changes
-    CommandBuffer commandBuffer(*m_logicalDevice, *m_commandPool, *m_pipeline, *m_swapChain, *m_vertexBuffer, *m_indexBuffer, ImGui::GetDrawData());
-    m_debugReport->startLabel(commandBuffer.get().at(imageIndex), "Draw ImGui and Teapot", glm::vec4(1, 1, 0, 1));
+    auto commandBuffer = m_commandBufferFactory->mainLoop(*m_pipeline, *m_swapChain, *m_vertexBuffer, *m_indexBuffer, ImGui::GetDrawData());
+    m_debugReport->startLabel(commandBuffer.at(imageIndex), "Draw ImGui and Teapot", glm::vec4(1, 1, 0, 1));
     m_debugReport->setObjectName(
         vk::ObjectType::eCommandBuffer, 
-        DebugReport::getVulkanHandle(commandBuffer.get().at(imageIndex)), 
+        DebugReport::getVulkanHandle(commandBuffer.at(imageIndex)), 
         "Main Command Buffer"
     );
 
     vk::SubmitInfo submitInfo(
         1, waitSemaphores, waitStages,
-        1, &commandBuffer.get()[imageIndex],
+        1, &commandBuffer[imageIndex],
         1, signalSemaphores
     );
     m_logicalDevice->getGraphicQueue().submit(submitInfo, nullptr);
@@ -204,7 +206,7 @@ void App::drawFrame() {
         &imageIndex, nullptr
     );
     m_logicalDevice->getPresentQueue().presentKHR(presentInfo);
-    m_debugReport->endLabel(commandBuffer.get().at(imageIndex));
+    m_debugReport->endLabel(commandBuffer.at(imageIndex));
 
     m_logicalDevice->getPresentQueue().waitIdle();
 }

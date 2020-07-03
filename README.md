@@ -97,6 +97,14 @@ Simply run the executable, but beware that the working directory must be this fo
 | [Vulkan multipass mobile defered done right - GDC 2017](https://www.khronos.org/assets/uploads/developers/library/2017-gdc/GDC_Vulkan-on-Mobile_Vulkan-Multipass-ARM_Mar17.pdf) | Hans-Kristian Arntzen               | Use of subpasses to do defered rendering with only one render pass instead of two |
 | [Deferring shading with multipass](https://arm-software.github.io/vulkan-sdk/multipass.html) | ARM                                 | Tutorial on deferred rendering with only one render pass     |
 
+### Memory
+
+| Link                                                         | Author        | Description |
+| ------------------------------------------------------------ | ------------- | ----------- |
+| [A simple device memory allocator](http://kylehalladay.com/blog/tutorial/2017/12/13/Custom-Allocators-Vulkan.html) | Kyle Halladay |             |
+|                                                              |               |             |
+|                                                              |               |             |
+
 ### Performance
 
 | Link                                                         | Author               | Description                                                |

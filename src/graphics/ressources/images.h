@@ -5,6 +5,8 @@
 #include "graphics/setup/devices.h"
 #include "graphics/ressources/memory-allocator.h"
 
+class CommandBufferFactory; // forward declaration
+
 /**
  * @brief Abstract class for images
  */
@@ -36,7 +38,7 @@ public:
  */
 class TextureImageView : public ImageView {
 public:
-	TextureImageView(LogicalDevice& device, MemoryAllocator& memoryAllocator, const char* filePath);
+	TextureImageView(LogicalDevice& device, MemoryAllocator& memoryAllocator, CommandBufferFactory& commandBufferFactory, const char* filePath);
 	~TextureImageView();
 };
 
