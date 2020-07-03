@@ -58,7 +58,7 @@ public:
 	Sampler(LogicalDevice& device);
 	~Sampler();
 
-	vk::Sampler& get() { m_sampler.get(); }
+	vk::Sampler& get() { return m_sampler.get(); }
 
 private:
 	vk::UniqueSampler m_sampler;

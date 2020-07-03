@@ -31,10 +31,10 @@ App::App() {
         m_vertexBuffer = new VertexBuffer(*m_logicalDevice, *m_memoryAllocator, model.vertices);
         m_indexBuffer = new IndexBuffer(*m_logicalDevice, *m_memoryAllocator, model);
         m_descriptorPool = new DescriptorPool(*m_logicalDevice);
-        m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain, *m_descriptorPool, *m_memoryAllocator, *m_sampler, *m_texture);
         m_commandPool = new CommandPool(*m_physicalDevice, *m_logicalDevice);
         m_commandBufferFactory = new CommandBufferFactory(*m_logicalDevice, *m_commandPool);
         m_texture = new TextureImageView(*m_logicalDevice, *m_memoryAllocator, *m_commandBufferFactory, "res/temp.jpg");
+        m_pipeline = new Pipeline(*m_logicalDevice, *m_swapChain, *m_descriptorPool, *m_memoryAllocator, *m_sampler, *m_texture);
         m_semaphore = new Semaphore(*m_logicalDevice);
 
     } catch (vk::SystemError e) {

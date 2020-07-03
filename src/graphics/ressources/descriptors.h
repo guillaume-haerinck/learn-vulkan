@@ -4,8 +4,9 @@
 #include <array>
 
 #include "graphics/setup/devices.h"
-#include "graphics/ressources/images.h"
 #include "buffers.h"
+
+class Sampler; // forward declaration
 
 /**
  * @brief Describe the vertex buffer layout

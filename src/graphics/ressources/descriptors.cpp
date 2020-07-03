@@ -1,6 +1,7 @@
 #include "descriptors.h"
 
 #include "buffers.h"
+#include "graphics/ressources/images.h"
 
 VertexInputDescription::VertexInputDescription() {
 	m_description = vk::VertexInputBindingDescription(0, sizeof(Vertex), vk::VertexInputRate::eVertex);
@@ -120,20 +121,33 @@ DescriptorSets::DescriptorSets(LogicalDevice& device,
 			vk::ImageLayout::eShaderReadOnlyOptimal
 		);
 
-		// TODO add imageInfo to writeInfo
+		vk::WriteDescriptorSet descriptorWrites[2] = {
+			vk::WriteDescriptorSet(
+				m_descriptorSets.at(i),
+				0, // dstBinding
+				0, // dstArrayElement
+				1, // descriptorCount
+				vk::DescriptorType::eUniformBuffer,
+				nullptr, // pImageInfo
+				&bufferInfo,
+				nullptr // pTexelBufferView
+			),
+			vk::WriteDescriptorSet(
+				m_descriptorSets.at(i),
+				1, // dstBinding
+				0, // dstArrayElement
+				1, // descriptorCount
+				vk::DescriptorType::eCombinedImageSampler,
+				&imageInfo, // pImageInfo 
+				nullptr, // pBufferInfo
+				nullptr // pTexelBufferView
+			)
+		};
 
-		vk::WriteDescriptorSet writeInfo(
-			m_descriptorSets.at(i),
-			0, // dstBinding
-			0, // dstArrayElement
-			1, // descriptorCount
-			vk::DescriptorType::eUniformBuffer,
-			nullptr, // pImageInfo
-			&bufferInfo,
-			nullptr // pTexelBufferView
+		m_device.get().updateDescriptorSets(
+			1, descriptorWrites, 
+			0, nullptr // descriptorCopies
 		);
-
-		m_device.get().updateDescriptorSets(1, &writeInfo, 0, nullptr);
 	}
 }
 
