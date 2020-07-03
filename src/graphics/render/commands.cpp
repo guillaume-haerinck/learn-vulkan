@@ -48,7 +48,7 @@ std::vector<vk::CommandBuffer> CommandBufferFactory::mainLoop(Pipeline& pipeline
         vk::ClearValue clearValues[2];
         vk::ClearColorValue clearColor(std::array<float, 4>{0.0f, 0.0f, 0.0f, 1.0f});
         clearValues[0].color = clearColor;
-        clearValues[1].depthStencil = { 1, 0 };
+        clearValues[1].depthStencil = vk::ClearDepthStencilValue(1, 0);
         vk::RenderPassBeginInfo renderPassInfo(
             pipeline.getRenderPass(),
             pipeline.getFrameBuffers()[i],

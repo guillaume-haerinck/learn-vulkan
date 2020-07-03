@@ -31,7 +31,7 @@ Simply run the executable, but beware that the working directory must be this fo
 - [x] Separate all meaningfull objects into separate classes
 - [x] Load a .gltf model
 - [x] ImGui support
-- [ ] Handle textures
+- [x] Handle textures
 - [ ] Defered shading
 - [ ] Annotate drawcalls with debug extension
 

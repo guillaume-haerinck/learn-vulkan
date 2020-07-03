@@ -81,13 +81,3 @@ foreach(shader ${MY_SHADERS})
     endif()
 
 endforeach()
-
-if (WIN32) 
-    # Copy .dll to build folder
-    add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${PROJECT_BINARY_DIR}/lib/glfw/src/glfw3.dll"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    )
-endif()

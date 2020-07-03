@@ -17,7 +17,7 @@ App::App() {
     glfwSetCursorPosCallback(m_window, processMousePos);
     glfwSetScrollCallback(m_window, processMouseScroll);
 
-    Model model = m_loader.loadModelFromFile("res/Vulkan-Samples-Assets/scenes/teapot.gltf");
+    Model model = m_loader.loadModelFromFile("res/Vulkan-Samples-Assets/scenes/cube.gltf");
 
     try {
         m_vkInstance = new Instance;

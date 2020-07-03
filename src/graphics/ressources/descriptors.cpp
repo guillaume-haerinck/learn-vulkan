@@ -145,7 +145,7 @@ DescriptorSets::DescriptorSets(LogicalDevice& device,
 		};
 
 		m_device.get().updateDescriptorSets(
-			1, descriptorWrites, 
+			2, descriptorWrites, 
 			0, nullptr // descriptorCopies
 		);
 	}
