@@ -54,7 +54,7 @@ vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindImage(ImageView& image)
 	return std::move(deviceMemory); // transfert unique ptr ownership
 }
 
-vk::UniqueDeviceMemory MemoryAllocator::allocateStagingBuffer(vk::Buffer& buffer, unsigned int byteWidth, unsigned char* data) {
+vk::UniqueDeviceMemory MemoryAllocator::allocateAndBindStagingBuffer(vk::Buffer& buffer, unsigned int byteWidth, unsigned char* data) {
 	vk::MemoryRequirements memoryRequirements = m_device.get().getBufferMemoryRequirements(buffer);
 
 	unsigned int memoryTypeIndex = PhysicalDevice::findMemoryType(
@@ -71,5 +71,6 @@ vk::UniqueDeviceMemory MemoryAllocator::allocateStagingBuffer(vk::Buffer& buffer
 	memcpy(pData, data, byteWidth);
 	m_device.get().unmapMemory(deviceMemory.get());
 
+	m_device.get().bindBufferMemory(buffer, deviceMemory.get(), 0);
 	return std::move(deviceMemory); // transfert unique ptr ownership
 }

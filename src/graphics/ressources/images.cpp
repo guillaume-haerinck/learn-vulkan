@@ -65,42 +65,46 @@ TextureImageView::TextureImageView(LogicalDevice& device, MemoryAllocator& memor
 		vk::SharingMode::eExclusive
 	);
 	auto stagingBuffer = device.get().createBufferUnique(info);
-	auto stagingBufferMemory = memoryAllocator.allocateStagingBuffer(*stagingBuffer, byteSize, pixels);
+	// TODO FIXME on tutorials staging buffer does not seems to be bound, investigate
+	auto stagingBufferMemory = memoryAllocator.allocateAndBindStagingBuffer(*stagingBuffer, byteSize, pixels);
 	stbi_image_free(pixels);
 
-	vk::ImageCreateInfo imageInfo(
-		vk::ImageCreateFlags(),
-		vk::ImageType::e2D,
-		vk::Format::eR8G8B8A8Srgb,
-		vk::Extent3D(texWidth, texHeight, 1),
-		1, // mipLevels
-		1, // arrayLayers
-		vk::SampleCountFlagBits::e1,
-		vk::ImageTiling::eOptimal,
-		vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
-		vk::SharingMode::eExclusive,
-		0, // queueFamilyIndexCount
-		0, // pQueueFamilyIndices, ignored when not concurent
-		vk::ImageLayout::eUndefined
-	);
-	m_image = device.get().createImageUnique(imageInfo);
-	m_memory = memoryAllocator.allocateAndBindImage(*this);
+	// Create image
+	{
+		vk::ImageCreateInfo imageInfo(
+			vk::ImageCreateFlags(),
+			vk::ImageType::e2D,
+			vk::Format::eR8G8B8A8Srgb,
+			vk::Extent3D(texWidth, texHeight, 1),
+			1, // mipLevels
+			1, // arrayLayers
+			vk::SampleCountFlagBits::e1,
+			vk::ImageTiling::eOptimal,
+			vk::ImageUsageFlagBits::eTransferDst | vk::ImageUsageFlagBits::eSampled,
+			vk::SharingMode::eExclusive,
+			0, // queueFamilyIndexCount
+			0, // pQueueFamilyIndices, ignored when not concurent
+			vk::ImageLayout::eUndefined
+		);
+		m_image = device.get().createImageUnique(imageInfo);
+		m_memory = memoryAllocator.allocateAndBindImage(*this);
 
-	vk::ImageViewCreateInfo imageViewInfo(
-		vk::ImageViewCreateFlags(),
-		m_image.get(),
-		vk::ImageViewType::e2D,
-		vk::Format::eR8G8B8A8Srgb,
-		vk::ComponentMapping(),
-		vk::ImageSubresourceRange(
-			vk::ImageAspectFlagBits::eColor,
-			0, // baseMipLevel
-			1, // levelCount
-			0, // baseArrayLayer
-			1  // layerCount
-		)
-	);
-	m_imageView = device.get().createImageViewUnique(imageViewInfo);
+		vk::ImageViewCreateInfo imageViewInfo(
+			vk::ImageViewCreateFlags(),
+			m_image.get(),
+			vk::ImageViewType::e2D,
+			vk::Format::eR8G8B8A8Srgb,
+			vk::ComponentMapping(),
+			vk::ImageSubresourceRange(
+				vk::ImageAspectFlagBits::eColor,
+				0, // baseMipLevel
+				1, // levelCount
+				0, // baseArrayLayer
+				1  // layerCount
+			)
+		);
+		m_imageView = device.get().createImageViewUnique(imageViewInfo);
+	}
 
 	// Transfert data from staging to end buffer with a command buffer
 	{
@@ -118,25 +122,22 @@ TextureImageView::TextureImageView(LogicalDevice& device, MemoryAllocator& memor
 			vk::Extent3D(texWidth, texHeight, 1)
 		);
 
+		// Commands
 		auto commandBuffer = commandBufferFactory.createAndBeginSingleTimeBuffer();
-		
 		setImageLayout(commandBuffer.get(), vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
-
-		// FIMXE some memory need to be bound
-		//commandBuffer->copyBufferToImage(stagingBuffer.get(), m_image.get(), vk::ImageLayout::eTransferDstOptimal, region);
-
+		commandBuffer->copyBufferToImage(stagingBuffer.get(), m_image.get(), vk::ImageLayout::eTransferDstOptimal, region);
 		setImageLayout(commandBuffer.get(), vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal);
-
 		commandBuffer->end();
 
+		// Send commands
 		vk::SubmitInfo submitInfo(
 			0, nullptr, // waitSemaphores
 			nullptr, // waitDstStageMask
 			1, &commandBuffer.get(), // commandBuffers
 			0, nullptr // signalSemaphores
 		);
-		device.getGraphicQueue().submit(submitInfo, nullptr);
 
+		device.getGraphicQueue().submit(submitInfo, nullptr);
 		device.getGraphicQueue().waitIdle();
 	}
 }

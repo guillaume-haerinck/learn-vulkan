@@ -27,7 +27,7 @@ public:
 	vk::UniqueDeviceMemory allocateAndBindBuffer(IBuffer& buffer, unsigned int index = 0, bool copyData = true);
 	vk::UniqueDeviceMemory allocateAndBindImage(ImageView& image);
 
-	vk::UniqueDeviceMemory allocateStagingBuffer(vk::Buffer& buffer, unsigned int byteWidth, unsigned char* data);
+	vk::UniqueDeviceMemory allocateAndBindStagingBuffer(vk::Buffer& buffer, unsigned int byteWidth, unsigned char* data);
 
 private:
 	PhysicalDevice& m_physicalDevice;
