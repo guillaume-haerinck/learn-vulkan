@@ -4,9 +4,20 @@
 #include <iostream>
 #include <debug_break/debug_break.h>
 
-Pipeline::Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& descriptorPool, MemoryAllocator& memoryAllocator)
-    : m_device(device), m_pipelineLayout(device), m_uniformBuffer(device, memoryAllocator, swapChain.getImageViews().size()),
-      m_descriptorSets(device, descriptorPool, m_pipelineLayout.getDescriptorSetLayout(), swapChain.getImageViews().size(), m_uniformBuffer),
+Pipeline::Pipeline(LogicalDevice& device, 
+    SwapChain& swapChain, 
+    DescriptorPool& descriptorPool, 
+    MemoryAllocator& memoryAllocator,
+    Sampler& sampler,
+    TextureImageView& texture
+)
+    : m_device(device), m_pipelineLayout(device), 
+      m_uniformBuffer(device, memoryAllocator, swapChain.getImageViews().size()),
+      m_descriptorSets(device, descriptorPool, 
+          m_pipelineLayout.getDescriptorSetLayout(), 
+          swapChain.getImageViews().size(), 
+          m_uniformBuffer, sampler, texture
+      ),
       m_framebuffer(device, swapChain, memoryAllocator)
 {
     // Shader stages

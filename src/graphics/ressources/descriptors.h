@@ -4,6 +4,7 @@
 #include <array>
 
 #include "graphics/setup/devices.h"
+#include "graphics/ressources/images.h"
 #include "buffers.h"
 
 /**
@@ -57,10 +58,16 @@ private:
 /**
  * @brief Store uniform buffers
  */
-class DescriptorSets
-{
+class DescriptorSets {
 public:
-    DescriptorSets(LogicalDevice& device, DescriptorPool& descriptorPool, DescriptorSetLayout& descriptorSetLayout, unsigned int swapChainImagesCount, UniformBuffer& uniformBuffer);
+    DescriptorSets(LogicalDevice& device, 
+        DescriptorPool& descriptorPool, 
+        DescriptorSetLayout& descriptorSetLayout, 
+        unsigned int swapChainImagesCount, 
+        UniformBuffer& uniformBuffer,
+        Sampler& sampler,
+        TextureImageView& texture
+    );
     ~DescriptorSets();
 
     vk::DescriptorSet& get(unsigned int index) { return m_descriptorSets.at(index); }

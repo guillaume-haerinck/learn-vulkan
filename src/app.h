@@ -45,6 +45,7 @@ private:
     Surface* m_surface;
     PhysicalDevice* m_physicalDevice;
     LogicalDevice* m_logicalDevice;
+    Sampler* m_sampler;
     SwapChain* m_swapChain;
     DescriptorPool* m_descriptorPool;
     Pipeline* m_pipeline;

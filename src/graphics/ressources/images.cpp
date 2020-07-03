@@ -65,7 +65,6 @@ TextureImageView::TextureImageView(LogicalDevice& device, MemoryAllocator& memor
 		vk::SharingMode::eExclusive
 	);
 	auto stagingBuffer = device.get().createBufferUnique(info);
-	// TODO FIXME on tutorials staging buffer does not seems to be bound, investigate
 	auto stagingBufferMemory = memoryAllocator.allocateAndBindStagingBuffer(*stagingBuffer, byteSize, pixels);
 	stbi_image_free(pixels);
 
@@ -146,8 +145,26 @@ TextureImageView::~TextureImageView()
 {
 }
 
-Sampler::Sampler()
-{
+Sampler::Sampler(LogicalDevice& device) {
+	vk::SamplerCreateInfo info(
+		vk::SamplerCreateFlags(),
+		vk::Filter::eLinear, // magFilter
+		vk::Filter::eLinear, // minFilter
+		vk::SamplerMipmapMode::eLinear,
+		vk::SamplerAddressMode::eRepeat,
+		vk::SamplerAddressMode::eRepeat,
+		vk::SamplerAddressMode::eRepeat,
+		0.f, // mipLodBias
+		true, // anisotropy
+		16.f, // maxAnisotropy
+		false, // compareEnable
+		vk::CompareOp::eAlways,
+		0.f, // minLod
+		0.f, // maxLod
+		vk::BorderColor::eIntOpaqueBlack,
+		false // unnormalizedCoordinates
+	);
+	m_sampler = device.get().createSamplerUnique(info);
 }
 
 Sampler::~Sampler()

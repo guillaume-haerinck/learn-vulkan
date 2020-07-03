@@ -55,9 +55,11 @@ public:
  */
 class Sampler {
 public:
-	Sampler();
+	Sampler(LogicalDevice& device);
 	~Sampler();
 
-private:
+	vk::Sampler& get() { m_sampler.get(); }
 
+private:
+	vk::UniqueSampler m_sampler;
 };

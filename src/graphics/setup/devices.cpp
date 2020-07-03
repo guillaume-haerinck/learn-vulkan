@@ -125,6 +125,7 @@ LogicalDevice::LogicalDevice(PhysicalDevice& physicalDevice) {
     }
     
     vk::PhysicalDeviceFeatures deviceFeatures = {};
+    deviceFeatures.samplerAnisotropy = true;
 
     // TODO might need to handle layer count etc now at 0
     vk::DeviceCreateInfo createInfo(

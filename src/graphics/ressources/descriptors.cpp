@@ -2,8 +2,7 @@
 
 #include "buffers.h"
 
-VertexInputDescription::VertexInputDescription()
-{
+VertexInputDescription::VertexInputDescription() {
 	m_description = vk::VertexInputBindingDescription(0, sizeof(Vertex), vk::VertexInputRate::eVertex);
 	m_inputDescription = {
 		vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32G32B32Sfloat, offsetof(Vertex, Vertex::position)),
@@ -14,18 +13,15 @@ VertexInputDescription::VertexInputDescription()
 
 VertexInputDescription::~VertexInputDescription() {}
 
-vk::VertexInputBindingDescription VertexInputDescription::getBindingDescription()
-{
+vk::VertexInputBindingDescription VertexInputDescription::getBindingDescription() {
 	return m_description;
 }
 
-std::array<vk::VertexInputAttributeDescription, 3> VertexInputDescription::getAttributeDescriptions()
-{
+std::array<vk::VertexInputAttributeDescription, 3> VertexInputDescription::getAttributeDescriptions() {
 	return m_inputDescription;
 }
 
-DescriptorSetLayout::DescriptorSetLayout(LogicalDevice& device)
-{
+DescriptorSetLayout::DescriptorSetLayout(LogicalDevice& device) {
 	vk::DescriptorSetLayoutBinding uboLayoutBinding(
 		0, // binding
 		vk::DescriptorType::eUniformBuffer,
@@ -34,10 +30,21 @@ DescriptorSetLayout::DescriptorSetLayout(LogicalDevice& device)
 		nullptr // pImmutableSamplers
 	);
 
+	vk::DescriptorSetLayoutBinding samplerLayoutBinding(
+		1, // binding
+		vk::DescriptorType::eCombinedImageSampler,
+		1, // descriptorCount
+		vk::ShaderStageFlagBits::eFragment,
+		nullptr // pImmutableSamplers
+	);
+
+	vk::DescriptorSetLayoutBinding layouts[2] = {
+		uboLayoutBinding, samplerLayoutBinding
+	};
+
 	vk::DescriptorSetLayoutCreateInfo layoutInfo(
 		vk::DescriptorSetLayoutCreateFlags(),
-		1,
-		&uboLayoutBinding
+		2, layouts
 	);
 
 	m_layout = device.get().createDescriptorSetLayoutUnique(layoutInfo);
@@ -79,7 +86,13 @@ DescriptorPool::~DescriptorPool()
 }
 
 
-DescriptorSets::DescriptorSets(LogicalDevice& device, DescriptorPool& descriptorPool, DescriptorSetLayout& descriptorSetLayout, unsigned int swapChainImagesCount, UniformBuffer& uniformBuffer)
+DescriptorSets::DescriptorSets(LogicalDevice& device, 
+	DescriptorPool& descriptorPool, 
+	DescriptorSetLayout& descriptorSetLayout, 
+	unsigned int swapChainImagesCount, 
+	UniformBuffer& uniformBuffer, 
+	Sampler& sampler,
+	TextureImageView& texture)
 	: m_device(device)
 {
 	std::vector<vk::DescriptorSetLayout> layouts(swapChainImagesCount, descriptorSetLayout.get());
@@ -100,6 +113,14 @@ DescriptorSets::DescriptorSets(LogicalDevice& device, DescriptorPool& descriptor
 			0, // offset
 			uniformBuffer.getByteSize(i)
 		);
+
+		vk::DescriptorImageInfo imageInfo(
+			sampler.get(),
+			texture.get(),
+			vk::ImageLayout::eShaderReadOnlyOptimal
+		);
+
+		// TODO add imageInfo to writeInfo
 
 		vk::WriteDescriptorSet writeInfo(
 			m_descriptorSets.at(i),

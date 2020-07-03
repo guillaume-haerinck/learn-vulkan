@@ -13,7 +13,13 @@
 
 class Pipeline {
 public:
-    Pipeline(LogicalDevice& device, SwapChain& swapChain, DescriptorPool& descriptorPool, MemoryAllocator& memoryAllocator);
+    Pipeline(LogicalDevice& device, 
+        SwapChain& swapChain, 
+        DescriptorPool& descriptorPool, 
+        MemoryAllocator& memoryAllocator,
+        Sampler& sampler,
+        TextureImageView& texture
+    );
     ~Pipeline();
 
     std::vector<vk::Framebuffer>& getFrameBuffers() { return m_framebuffer.get(); }
