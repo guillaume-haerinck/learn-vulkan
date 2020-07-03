@@ -70,3 +70,20 @@ std::vector<vk::CommandBuffer> CommandBufferFactory::mainLoop(Pipeline& pipeline
     return commandBuffers;
 }
 
+vk::UniqueCommandBuffer CommandBufferFactory::createAndBeginSingleTimeBuffer() {
+    vk::CommandBufferAllocateInfo allocInfo(
+        m_commandPool.get(),
+        vk::CommandBufferLevel::ePrimary,
+        1
+    );
+    auto commandBuffer = std::move(m_device.get().allocateCommandBuffersUnique(allocInfo).front());
+
+    vk::CommandBufferBeginInfo beginInfo(
+        vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
+        nullptr
+    );
+
+    commandBuffer->begin(beginInfo);
+    return std::move(commandBuffer);
+}
+

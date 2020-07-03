@@ -103,22 +103,7 @@ TextureImageView::TextureImageView(LogicalDevice& device, MemoryAllocator& memor
 	m_imageView = device.get().createImageViewUnique(imageViewInfo);
 
 	// Transfert data from staging to end buffer with a command buffer
-	// https://vulkan-tutorial.com/Texture_mapping/Images
-	// TODO use command buffer factory
-	/*
 	{
-		vk::CommandBufferAllocateInfo allocInfo(
-			commandPool.get(),
-			vk::CommandBufferLevel::ePrimary,
-			1
-		);
-		auto commandBuffer = device.get().allocateCommandBuffers(allocInfo).at(0);
-
-		vk::CommandBufferBeginInfo beginInfo(
-			vk::CommandBufferUsageFlagBits::eOneTimeSubmit,
-			nullptr
-		);
-
 		vk::BufferImageCopy region(
 			0, // bufferOffset
 			0, // bufferRowLength
@@ -133,40 +118,27 @@ TextureImageView::TextureImageView(LogicalDevice& device, MemoryAllocator& memor
 			vk::Extent3D(texWidth, texHeight, 1)
 		);
 
-		vk::ImageMemoryBarrier barrier(
-			vk::AccessFlags(), // srcAccessMask FIXME Might be wrong
-			vk::AccessFlagBits::eTransferWrite, // dstAccessMask
-			vk::ImageLayout::eUndefined, // oldLayout
-			vk::ImageLayout::eTransferDstOptimal, // newLayout
-			VK_QUEUE_FAMILY_IGNORED, // srcQueueFamilyIndex
-			VK_QUEUE_FAMILY_IGNORED, // dstQueueFamilyIndex
-			m_image.get(),
-			vk::ImageSubresourceRange(
-				vk::ImageAspectFlagBits::eColor,
-				0, // mipLevel
-				1, // levelCount
-				0, // baseArrayLayer
-				1  // layerCount
-			)
-		);
-
-		commandBuffer.begin(beginInfo);
+		auto commandBuffer = commandBufferFactory.createAndBeginSingleTimeBuffer();
 		
+		setImageLayout(commandBuffer.get(), vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eUndefined, vk::ImageLayout::eTransferDstOptimal);
 
+		// FIMXE some memory need to be bound
+		//commandBuffer->copyBufferToImage(stagingBuffer.get(), m_image.get(), vk::ImageLayout::eTransferDstOptimal, region);
 
-		commandBuffer.end();
+		setImageLayout(commandBuffer.get(), vk::Format::eR8G8B8A8Srgb, vk::ImageLayout::eTransferDstOptimal, vk::ImageLayout::eShaderReadOnlyOptimal);
+
+		commandBuffer->end();
 
 		vk::SubmitInfo submitInfo(
 			0, nullptr, // waitSemaphores
 			nullptr, // waitDstStageMask
-			1, &commandBuffer, // commandBuffers
+			1, &commandBuffer.get(), // commandBuffers
 			0, nullptr // signalSemaphores
 		);
-		device.getPresentQueue().submit(submitInfo, nullptr);
+		device.getGraphicQueue().submit(submitInfo, nullptr);
 
-		device.getPresentQueue().waitIdle();
+		device.getGraphicQueue().waitIdle();
 	}
-	*/
 }
 
 TextureImageView::~TextureImageView()
@@ -179,4 +151,81 @@ Sampler::Sampler()
 
 Sampler::~Sampler()
 {
+}
+
+void ImageView::setImageLayout(vk::CommandBuffer const& commandBuffer, vk::Format format, vk::ImageLayout oldImageLayout, vk::ImageLayout newImageLayout) {
+	vk::AccessFlags sourceAccessMask;
+	switch (oldImageLayout) {
+	case vk::ImageLayout::eTransferDstOptimal: sourceAccessMask = vk::AccessFlagBits::eTransferWrite; break;
+	case vk::ImageLayout::ePreinitialized: sourceAccessMask = vk::AccessFlagBits::eHostWrite; break;
+	case vk::ImageLayout::eGeneral:  // sourceAccessMask is empty
+	case vk::ImageLayout::eUndefined: break;
+	default: assert(false); break;
+	}
+
+	vk::PipelineStageFlags sourceStage;
+	switch (oldImageLayout) {
+	case vk::ImageLayout::eGeneral:
+	case vk::ImageLayout::ePreinitialized: sourceStage = vk::PipelineStageFlagBits::eHost; break;
+	case vk::ImageLayout::eTransferDstOptimal: sourceStage = vk::PipelineStageFlagBits::eTransfer; break;
+	case vk::ImageLayout::eUndefined: sourceStage = vk::PipelineStageFlagBits::eTopOfPipe; break;
+	default: assert(false); break;
+	}
+
+	vk::AccessFlags destinationAccessMask;
+	switch (newImageLayout) {
+	case vk::ImageLayout::eColorAttachmentOptimal:
+		destinationAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
+		break;
+	case vk::ImageLayout::eDepthStencilAttachmentOptimal:
+		destinationAccessMask =
+			vk::AccessFlagBits::eDepthStencilAttachmentRead | vk::AccessFlagBits::eDepthStencilAttachmentWrite;
+		break;
+	case vk::ImageLayout::eGeneral:  // empty destinationAccessMask
+	case vk::ImageLayout::ePresentSrcKHR: break;
+	case vk::ImageLayout::eShaderReadOnlyOptimal: destinationAccessMask = vk::AccessFlagBits::eShaderRead; break;
+	case vk::ImageLayout::eTransferSrcOptimal: destinationAccessMask = vk::AccessFlagBits::eTransferRead; break;
+	case vk::ImageLayout::eTransferDstOptimal: destinationAccessMask = vk::AccessFlagBits::eTransferWrite; break;
+	default: assert(false); break;
+	}
+
+	vk::PipelineStageFlags destinationStage;
+	switch (newImageLayout) {
+	case vk::ImageLayout::eColorAttachmentOptimal:
+		destinationStage = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+		break;
+	case vk::ImageLayout::eDepthStencilAttachmentOptimal:
+		destinationStage = vk::PipelineStageFlagBits::eEarlyFragmentTests;
+		break;
+	case vk::ImageLayout::eGeneral: destinationStage = vk::PipelineStageFlagBits::eHost; break;
+	case vk::ImageLayout::ePresentSrcKHR: destinationStage = vk::PipelineStageFlagBits::eBottomOfPipe; break;
+	case vk::ImageLayout::eShaderReadOnlyOptimal:
+		destinationStage = vk::PipelineStageFlagBits::eFragmentShader;
+		break;
+	case vk::ImageLayout::eTransferDstOptimal:
+	case vk::ImageLayout::eTransferSrcOptimal: destinationStage = vk::PipelineStageFlagBits::eTransfer; break;
+	default: assert(false); break;
+	}
+
+	vk::ImageAspectFlags aspectMask;
+	if (newImageLayout == vk::ImageLayout::eDepthStencilAttachmentOptimal) {
+		aspectMask = vk::ImageAspectFlagBits::eDepth;
+		if (format == vk::Format::eD32SfloatS8Uint || format == vk::Format::eD24UnormS8Uint)
+			aspectMask |= vk::ImageAspectFlagBits::eStencil;
+	} else {
+		aspectMask = vk::ImageAspectFlagBits::eColor;
+	}
+
+	vk::ImageSubresourceRange imageSubresourceRange(aspectMask, 0, 1, 0, 1);
+	vk::ImageMemoryBarrier    imageMemoryBarrier(
+		sourceAccessMask,
+		destinationAccessMask,
+		oldImageLayout,
+		newImageLayout,
+		VK_QUEUE_FAMILY_IGNORED,
+		VK_QUEUE_FAMILY_IGNORED,
+		m_image.get(),
+		imageSubresourceRange
+	);
+	return commandBuffer.pipelineBarrier(sourceStage, destinationStage, {}, nullptr, nullptr, imageMemoryBarrier);
 }

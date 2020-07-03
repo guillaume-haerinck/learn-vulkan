@@ -39,6 +39,7 @@ public:
 
 
     std::vector<vk::CommandBuffer> mainLoop(Pipeline& pipeline, SwapChain& swapChain, VertexBuffer& vertexBuffer, IndexBuffer& indexBuffer, ImDrawData* draw_data);
+    vk::UniqueCommandBuffer createAndBeginSingleTimeBuffer();
 
 private:
     LogicalDevice& m_device; 

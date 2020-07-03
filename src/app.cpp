@@ -107,25 +107,14 @@ void App::initImgui()
 
     // Upload Fonts
     {
-        vk::CommandBufferAllocateInfo allocInfo(
-            m_commandPool->get(), 
-            vk::CommandBufferLevel::ePrimary, 
-            1
-        );
-        auto commandBuffer = m_logicalDevice->get().allocateCommandBuffers(allocInfo).at(0);
-        
-        vk::CommandBufferBeginInfo beginInfo(
-            vk::CommandBufferUsageFlagBits::eOneTimeSubmit, 
-            nullptr
-        );
-        commandBuffer.begin(beginInfo);
-        ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
-        commandBuffer.end();
+        auto commandBuffer = m_commandBufferFactory->createAndBeginSingleTimeBuffer();
+        ImGui_ImplVulkan_CreateFontsTexture(commandBuffer.get());
+        commandBuffer->end();
 
         vk::SubmitInfo submitInfo(
             0, nullptr, // waitSemaphores
             nullptr, // waitDstStageMask
-            1, &commandBuffer, // commandBuffers
+            1, &commandBuffer.get(), // commandBuffers
             0, nullptr // signalSemaphores
         );
         m_logicalDevice->getPresentQueue().submit(submitInfo, nullptr);
