@@ -1,6 +1,5 @@
 #include "gltf-loader.h"
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <cassert>
@@ -74,24 +73,24 @@ Model GLTFLoader::loadModelFromFile(const char* filePath)
 		size_t endByte = startByte + accessor.count * stride;
 
 		auto format = getAttributeFormat(&model, gltf_primitive.indices);
-		std::vector<uint8_t> indices_data = { buffer.data.begin() + startByte, buffer.data.begin() + endByte };
+		std::vector<uint8_t> indicesData = { buffer.data.begin() + startByte, buffer.data.begin() + endByte };
 		parsedModel.indicesCount = accessor.count;
 
 		// Target R32Uint format indices
 		switch (format) {
 		case vk::Format::eR16Uint:
-			indices_data = convertUnderlyingDataStride(indices_data, 2, 4);
+			indicesData = convertUnderlyingDataStride(indicesData, 2, 4);
 			break;
 
 		case vk::Format::eR8Uint:
-			indices_data = convertUnderlyingDataStride(indices_data, 1, 4);
+			indicesData = convertUnderlyingDataStride(indicesData, 1, 4);
 			break;
 
 		default:
 			break;
 		}
 
-		parsedModel.indices_data = indices_data;
+		parsedModel.indicesData = indicesData;
 	} else {
 		std::cout << "[gltf loader] Non-indexed drawing not handled yet, artifacts will appear" << std::endl;
 	}

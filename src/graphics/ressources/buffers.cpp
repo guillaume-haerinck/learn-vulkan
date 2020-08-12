@@ -23,8 +23,8 @@ IndexBuffer::IndexBuffer(LogicalDevice& device, MemoryAllocator& memoryAllocator
     : IBuffer(device, memoryAllocator)
 {
     m_elementCount = model.indicesCount;
-    m_byteSize = sizeof(model.indices_data.at(0)) * model.indices_data.size();
-    m_indices_data = model.indices_data;
+    m_byteSize = sizeof(model.indicesData.at(0)) * model.indicesData.size();
+    m_indices_data = model.indicesData;
 
     vk::BufferCreateInfo info(
         vk::BufferCreateFlags(),
@@ -65,8 +65,6 @@ UniformBuffer::~UniformBuffer()
 
 void UniformBuffer::updateBuffer(unsigned int currentImage, const glm::mat4x4& viewProj)
 {
-    // TODO use push constants instead to update buffer
-
     static auto startTime = std::chrono::high_resolution_clock::now();
     auto currentTime = std::chrono::high_resolution_clock::now();
     float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();

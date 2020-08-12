@@ -47,7 +47,7 @@ Model BinaryLoader::loadModelFromFile(const char* vertexFilePath, const char* in
 
 	for (size_t i = 0; i < indicesCount; i++) {
 		auto indice = reinterpret_cast<const uint8_t*>(indexData.data() + indiceByteSize * i);
-		model.indices_data.push_back(*indice);
+		model.indicesData.push_back(*indice);
 	}
 
 	return model;

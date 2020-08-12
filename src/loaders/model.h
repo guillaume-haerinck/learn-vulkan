@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include <glm/glm.hpp>
 
 /**
@@ -23,6 +24,7 @@ struct Vertex {
  */
 struct Model {
 	std::vector<Vertex> vertices;
-	std::vector<uint8_t> indices_data;
+	std::vector<uint8_t> indicesData;
 	unsigned int indicesCount;
+    std::string debugName;
 };
