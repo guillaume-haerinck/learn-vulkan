@@ -132,7 +132,7 @@ Pipeline::Pipeline(LogicalDevice& device,
         nullptr, // basePipelineHandle
         -1 // basePipelineIndex
     );
-    m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo);
+    m_graphicsPipeline = m_device.get().createGraphicsPipeline(nullptr, pipelineInfo).value;
     
     // Cleanup
     m_device.get().destroyShaderModule(shaderStages[0].module);

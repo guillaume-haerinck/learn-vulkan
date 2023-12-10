@@ -74,7 +74,7 @@ bool PhysicalDevice::checkDeviceExtensionSupport(vk::PhysicalDevice& device) {
     std::set<std::string> requiredExtensions(m_deviceExtensions.begin(), m_deviceExtensions.end());
 
     for (const auto& extension : availableExtensions) {
-        requiredExtensions.erase(std::string(extension.extensionName));
+        requiredExtensions.erase(std::string(extension.extensionName.data()));
     }
 
     return requiredExtensions.empty();

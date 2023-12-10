@@ -55,7 +55,7 @@ Instance::~Instance() {
 void Instance::findBestLayers(const std::vector<vk::LayerProperties>& installed, const std::vector<const char*>& wanted, std::vector<const char*>& out) {
     for (const char* const& w : wanted) {
 		for (vk::LayerProperties const& i : installed) {
-			if (std::string(i.layerName).compare(w) == 0) {
+			if (std::string(i.layerName.data()).compare(w) == 0) {
 				out.emplace_back(w);
 				break;
 			}
@@ -66,7 +66,7 @@ void Instance::findBestLayers(const std::vector<vk::LayerProperties>& installed,
 void Instance::findBestExtensions(const std::vector<vk::ExtensionProperties>& installed, const std::vector<const char*>& wanted, std::vector<const char*>& out) {
 	for (const char* const& w : wanted) {
 		for (vk::ExtensionProperties const& i : installed) {
-			if (std::string(i.extensionName).compare(w) == 0) {
+			if (std::string(i.extensionName.data()).compare(w) == 0) {
 				out.emplace_back(w);
 				break;
 			}
